@@ -51,9 +51,27 @@ cmake --build build --config Release -j$(nproc)
 
 #### Testing after the build
 
+The `-ngl 0` excludes using the GPU completely, while the `--mlock` keep the model always in RAM:
+
+```
 cd build/bin
 export PATH=$PWD:$PATH
-model=$HOME/Downloads/Qwen3.5-4B-UD-Q5_K_XL.gguf
-llama-cli --mlock -ctk q8_0 -ctv q8_0 -rea off -fa on -c 4096 -m $model
+model="$HOME/Downloads/Qwen3.5-4B-UD-Q4_K_M.gguf"
+options="-ctk q8_0 -ctv q8_0 -rea off -fa on --swa-full"
+llama-cli --mlock $options -c 4096 -ngl 0 -t 4 -m $model
+```
 
+The model is configured to reply without thinking and use in full the flash attention `-fa on --swa-full` which reduces the consumption of the RAM compared the same amount of tokens for the context `-c 4096`.
 
+The context quantisation at 8-bit `-ctk q8_0 -ctv q8_0` keeps a good precision but halves the consumption of the RAM compared with the 16-bit natural representation.
+
+#### Expected performance on i5-8365
+
+Note that off-loading to the GPU is slower than CPU-only:
+
+- `Gemma-2-2b-it.Q4_k_m.gguf` @ 13.3 tk/s
+- `Qwen3.5-4B-UD-Q5_K_XL.gguf` @ 5.7 tk/s
+
+This because the i5's GPU cannot handle all the layers.
+
+Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder.
