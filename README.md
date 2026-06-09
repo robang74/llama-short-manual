@@ -10,7 +10,7 @@ A short manual to run AI locally on your PC/laptop w/ decent performance despite
 
 ### Minimal HW requirements
 
-For a target model between 2B and 7B parameters:
+For a target model between 2B and 8B parameters:
 
 - **CPU**: Intel i5-8265 or Ryzen 2500U
 - **RAM**: not less than 16GB w/ Ubuntu
@@ -133,7 +133,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 18.3 | &nbsp; 7.3 | 4.15 | 3.65 | 3.08 |
 | `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf` |  15.9 | &nbsp; 6.6 | **8.01** | 7.60 | 4.14 | 
 | [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 13.7 | &nbsp; 5.3 | 7.61 | 7.27 | 4.78 |
-| [`gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) | &nbsp; 8.9 | &nbsp; 3.6 | 12.2 | 11.6 | 6.86 |
+| [`gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*w/ mem. lim. 12GB*) | &nbsp; 8.9 | &nbsp; 3.6 | 12.2 | 11.6 | 6.86 |
 - **NOTE**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
