@@ -1,2 +1,42 @@
-# llama-short-manual
-A short manual to run AI locally on your PC/laptop
+## llama short manual
+
+**`(c)`** 2026 – Roberto A. Foglietta &lt;roberto.foglietta@gmail.com&gt;, CC BY-NC-ND 4.0
+
+- &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
+
+A short manual to run AI locally on your PC/laptop w/ decent performance despite minimal HW requisites-
+
+---
+
+### Minimal HW requirements
+
+For a target model between 3B and 4B parameters:
+
+- **CPU**: Intel i5-8265 or Ryzen 2500U
+- **RAM**: not less than 16GB w/ Ubuntu
+- **GGUFF** file size below the 6GB (cli)
+
+Target quantisation between Q4_K_S and Q4_K_XL
+
+Using a HTTP server doesn't eat a lot of RAM but the browser.
+
+The bigger is the context size, the smaller should be the model.
+
+On an Ubuntu essential configuration 8GB can given to running the AI.
+
+---
+
+### Native llama quick build
+
+To compile your llama native build w/ Vulkan support on Ubuntu:
+
+```sh
+sudo apt update
+sudo apt install git build-essential cmake mesa-vulkan-drivers \
+  vulkan-tools libvulkan-dev vulkan-sdk glslang-tools glslang-dev \
+  glslang-tools libopenblas-dev
+git clone https://github.com/robang74/llama.cpp
+cd llama.cpp
+cmake -B build -DGGML_VULKAN=ON
+cmake --build build --config Release -j$(nproc)
+```
