@@ -10,13 +10,14 @@ A short manual to run AI locally on your PC/laptop w/ decent performance despite
 
 ### Minimal HW requirements
 
-For a target model between 3B and 4B parameters:
+For a target model between 2B and 7B parameters:
 
 - **CPU**: Intel i5-8265 or Ryzen 2500U
 - **RAM**: not less than 16GB w/ Ubuntu
-- **GGUFF** file size below the 6GB (cli)
+- **DDR4**: clock 2400Mhz in dual-channel
+- **GGUF** file size below the 6GB (cli)
 
-Target quantisation between Q4_K_S and Q5_K_XL
+Target quantisation between `Q4_0` and `Q5_K_XL`
 
 ---
 
@@ -56,12 +57,12 @@ The `-ngl 0` excludes using the GPU completely, while the `--mlock` keep the mod
 ```
 cd build/bin
 export PATH=$PWD:$PATH
-model="$HOME/Downloads/Qwen3.5-4B-UD-Q4_K_M.gguf"
-options="-ctk q8_0 -ctv q8_0 -rea off -fa on --swa-full"
-llama-cli --mlock $options -c 4096 -ngl 0 -t 4 -m $model
+model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
+options="-ctk q8_0 -ctv q8_0 -rea off -fa on -t 4"
+llama-cli --mlock $options -c 4096 -ngl 0 -m $model
 ```
 
-The model is configured to reply without thinking and use in full the flash attention `-fa on --swa-full` which reduces the consumption of the RAM compared the same amount of tokens for the context `-c 4096`.
+The model is configured to reply without thinking and use in full the flash attention `-fa on` which reduces the consumption of the RAM compared the same amount of tokens for the context `-c 4096`.
 
 The context quantisation at 8-bit `-ctk q8_0 -ctv q8_0` keeps a good precision but halves the consumption of the RAM compared with the 16-bit natural representation.
 
@@ -71,11 +72,18 @@ Testing question:
 
 > What is the name of the capital of France?
 
-Note that off-loading to the GPU is slower than CPU-only:
+Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
-- `Gemma-2-2b-it.Q4_k_m.gguf` @ 13.4 tk/s
-- `Qwen3.5-4B-UD-Q5_K_XL.gguf` @ 5.8 tk/s
+- `Gemma-2-2b-it.Q4_k_m.gguf`: 40.5 Rt/s, 13.8 Wt/s, mem:img 2.0 / 1.59 GB
+- `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 16.1 Rtk/s, 5.8 tk/s, mem:img 2.3 / 3.08 GB
+- `Qwen3.5-4B-Q4_K_M.gguf`: 18.4 Rt/s, 6.9 Wt/s, mem:img 2.6 / 2.64 GB
 
-This because the i5's GPU cannot handle all the layers.
+The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the real RAM consumption, taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs (*).
 
 Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
+
+- `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf`:  15.9 Rt/s, 6.2 Wtk/s, mem:img 2.1 / 4.14 GB, 
+
+While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
+
+(*) The correct approach includes checking also the resident size in memory of the llama running the model.
