@@ -37,7 +37,7 @@ The Q4 and the context are those points on which we can save RAM when the AI loc
 
 ### Native llama quick build
 
-To compile your llama native build w/ Vulkan support on Ubuntu:
+To compile your llama native build w/ Vulkan support on Ubuntu (22.04 LTS, in my case):
 
 ```sh
 sudo apt update
@@ -47,6 +47,7 @@ sudo apt install git build-essential cmake libvulkan1 \
 # optional and useless with -DLLAMA_SERVER_LLAMAUI=OFF
 # sudo apt install nodejs npm
 
+# copy 1:1 of the original project, currently at #e3471b3e7
 git clone https://github.com/robang74/llama.cpp
 cd llama.cpp
 
