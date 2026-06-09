@@ -17,7 +17,7 @@ For a target model between 2B and 7B parameters:
 - **DDR4**: clock 2400Mhz in dual-channel
 - **GGUF**: file size below 6GB (mem 8GB)
 
-Target quantisation between `Q4_0` and `Q5_K_XL`
+Target quantisation between `Q4_0` (fast) and `Q5_K_XL` (fine).
 
 ---
 
