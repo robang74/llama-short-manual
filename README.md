@@ -1,4 +1,4 @@
-# llama short manual
+# Llama short manual
 
 **`(c)`** 2026 – Roberto A. Foglietta &lt;roberto.foglietta@gmail.com&gt;, CC BY-NC-ND 4.0
 
@@ -125,16 +125,18 @@ Testing question:
 
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
-- `Gemma-2-2b-it.Q4_k_m.gguf`: 47.4 Rt/s, 13.8 Wt/s, 2.15/1.59 GB
-- [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf): 18.3 Rtk/s, 6.7 Wtk/s, 3.65/3.08 GB
-- [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf): 26.8 Rt/s, 8.1 Wt/s, 3.64/2.64 GB
-- [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) 13.7 Rt/s, 5.3 Wt/s, 7.27/4.78 GB
+| Model Name  | Read | Write | Peak | Mem | File |
+| ----------- | ---- | ----- | ---- | --- | ---- |
+| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Quatisation | &nbsp;tk/s | &nbsp;tk/s | &nbsp; GB | &nbsp; GB | &nbsp; GB |
+| `Gemma-2-2b-it.Q4_k_m.gguf` | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 |
+| [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 26.8 | &nbsp; 8.1 | **5.03** | 3.64 | 2.64 |
+| `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf` |  15.9 | &nbsp; 6.6 | **8.01** | 7.60 | 4.14 | 
+| [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 18.3 | &nbsp; 7.3 | 4.15 | 3.65 | 3.08 |
+| [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 13.7 | &nbsp; 5.3 | 7.61 | 7.27 | 4.78 |
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
 
 Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
-
-- `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf`:  15.9 Rt/s, 6.6 Wtk/s, 4.55/4.14 GB, 
 
 While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
 
