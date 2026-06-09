@@ -133,6 +133,8 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 18.3 | &nbsp; 7.3 | 4.15 | 3.65 | 3.08 |
 | `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf` |  15.9 | &nbsp; 6.6 | **8.01** | 7.60 | 4.14 | 
 | [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 13.7 | &nbsp; 5.3 | 7.61 | 7.27 | 4.78 |
+| *By Comparison*: | | | | | |
+| [`Qwen3.5-4B-Q5_K_S`](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) **.** [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) (3.75 GB) | | &nbsp; 4.96 | 8.80 | 4.78 | 3.02 |
 | *Above Limits*: | | | | | |
 | [`gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*w/ mem. lim. 12GB*) | &nbsp; 8.9 | &nbsp; 3.6 | 12.2 | 11.6 | 6.86 |
 - **NOTE**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
