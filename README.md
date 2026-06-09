@@ -1,4 +1,4 @@
-## llama short manual
+# llama short manual
 
 **`(c)`** 2026 – Roberto A. Foglietta &lt;roberto.foglietta@gmail.com&gt;, CC BY-NC-ND 4.0
 
@@ -56,7 +56,7 @@ cmake --build build --config Release -j$(nproc)
 
 The `-ngl 0` excludes using the GPU completely, while the `--mlock` keep the model always in RAM:
 
-```
+```sh
 cd build/bin
 export PATH=$PWD:$PATH
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
@@ -92,7 +92,7 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 
 The correct full approach includes checking also the resident size in memory of the `llama` running the model (checking the `free` difference, also) and dropping the cache before the run:
 
-```
+```sh
 $ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 $ free; llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
                total        used        free      shared  buff/cache   available
