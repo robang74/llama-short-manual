@@ -41,12 +41,21 @@ To compile your llama native build w/ Vulkan support on Ubuntu:
 
 ```sh
 sudo apt update
-sudo apt install git build-essential cmake mesa-vulkan-drivers \
-  vulkan-tools libvulkan-dev vulkan-sdk glslang-tools glslang-dev \
-  glslang-tools libopenblas-dev
+sudo apt install git build-essential cmake libvulkan1 \
+  mesa-vulkan-drivers vulkan-tools libvulkan-dev vulkan-sdk \
+  glslang-tools glslang-dev glslang-tools libopenblas-dev
+# optional and useless with -DLLAMA_SERVER_LLAMAUI=OFF
+# sudo apt install nodejs npm
+
 git clone https://github.com/robang74/llama.cpp
 cd llama.cpp
-cmake -B build -DGGML_VULKAN=ON -DGGML_BLAS=OFF
+
+# if your GPU does not perform better than '-ngl 0' then
+# set Vulkan OFF, add -DGGML_CPU_K_QUANTS=ON and before
+# rebuild do rm -rf build to clean the previous build
+# which is not strictly necessary but it 100% works.
+cmake -B build -DGGML_VULKAN=ON -DGGML_BLAS=OFF \
+  -DGGML_NATIVE=ON -DGGML_CPU_K_QUANTS=ON
 cmake --build build --config Release -j$(nproc)
 ```
 
@@ -82,7 +91,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 
 - `Gemma-2-2b-it.Q4_k_m.gguf`: 40.5 Rt/s, 13.8 Wt/s, 2.15/1.59 GB
 - `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 16.1 Rtk/s, 5.8 tk/s, 3.65/3.08 GB
-- `Qwen3.5-4B-Q4_K_M.gguf`: 19.4 Rt/s, 7.5 Wt/s, 3.64/2.64 GB
+- `Qwen3.5-4B-Q4_K_M.gguf`: 26.8 Rt/s, 8.1 Wt/s, 3.64/2.64 GB
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption (`available` difference), taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs.
 
