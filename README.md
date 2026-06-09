@@ -113,7 +113,7 @@ aisurf() { GDK_BACKEND=x11 surf http://127.0.0.1:8080; }
 aisurf
 ```
 
-Including the minimalistic surf that has a very low RAM footprint and it is safe to use for browsing a fully trusted local address like the one provided by the llama web server.
+Including the minimalistic surf that has a very low RAM footprint (128MB for the whole browser, but a Chrome tab would be similar if already opened for other indispensable activities) and it is safe to use for browsing a fully trusted local address like the one provided by the llama web server.
 
 ---
 
@@ -144,11 +144,11 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 The correct full approach includes checking also the resident size in memory of the `llama` instance running the model:
 
 ```sh
-sudo apt install smem
-smem -P llama-server | grep -v python
+pmem() { grep ^Vm /proc/$(pgrep $1)/status; }
+pmem llama-server
 ```
 
-But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `smem` output:
+But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
 
 ```sh
 $ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
