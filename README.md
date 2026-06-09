@@ -16,13 +16,21 @@ For a target model between 3B and 4B parameters:
 - **RAM**: not less than 16GB w/ Ubuntu
 - **GGUFF** file size below the 6GB (cli)
 
-Target quantisation between Q4_K_S and Q4_K_XL
+Target quantisation between Q4_K_S and Q5_K_XL
 
-Using a HTTP server doesn't eat a lot of RAM but the browser.
+---
 
-The bigger is the context size, the smaller should be the model.
+### Memory management plan
 
-On an Ubuntu essential configuration 8GB can given to running the AI.
+The main idea is to split the 16GB RAM in two halves, one for the OS/application usage and the other half for running the AI model.
+
+In this scenario, few point to keep in consideration:
+
+- Using a HTTP server doesn't eat a lot of RAM but the browser.
+- The bigger the context size, the smaller the model should be.
+- On an Ubuntu essential configuration 8GB can be given to running the AI.
+
+The Q4 and the context are those points on which we can save RAM when the AI local model is supposed to always run in concurrence with a decent desktop activity.
 
 ---
 
