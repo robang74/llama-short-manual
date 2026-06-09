@@ -90,8 +90,8 @@ Testing question:
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
 - `Gemma-2-2b-it.Q4_k_m.gguf`: 47.4 Rt/s, 13.8 Wt/s, 2.15/1.59 GB
-- `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 18.3 Rtk/s, 6.7 tk/s, 3.65/3.08 GB
-- `Qwen3.5-4B-Q4_K_M.gguf`: 26.8 Rt/s, 8.1 Wt/s, 3.64/2.64 GB
+- [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf?download=true): 18.3 Rtk/s, 6.7 tk/s, 3.65/3.08 GB
+- [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf?download=true): 26.8 Rt/s, 8.1 Wt/s, 3.64/2.64 GB
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption (`available` difference), taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs.
 
