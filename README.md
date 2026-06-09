@@ -48,3 +48,12 @@ cd llama.cpp
 cmake -B build -DGGML_VULKAN=ON
 cmake --build build --config Release -j$(nproc)
 ```
+
+#### Testing after the build
+
+cd build/bin
+export PATH=$PWD:$PATH
+model=$HOME/Downloads/Qwen3.5-4B-UD-Q5_K_XL.gguf
+llama-cli --mlock -ctk q8_0 -ctv q8_0 -rea off -fa on -c 4096 -m $model
+
+
