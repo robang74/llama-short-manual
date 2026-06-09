@@ -101,6 +101,10 @@ Threads parallelisation `-t 4` should be related to the number of cores, ignorin
 
 While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
 
+---
+
+### Benchmark screenshot example
+
 The correct full approach includes checking also the resident size in memory of the `llama` running the model (checking the `free` difference, also) and dropping the cache before the run:
 
 ```sh
@@ -146,5 +150,5 @@ The capital of France is **Paris**.
 Mem:        16148684     6166552     5072540     1266792     4909592     6403060
 ```
 ```
-> /exxit
+> /exit
 ```
