@@ -147,6 +147,12 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 
 By Comparison, I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llamafile` and the most significative differences are: 1) it seems faster in loading the model in `--chat` mode; 2) much more pressure on the system RAM, not because the model rather than binary code redundancy; 3) apparently slower in answering. BTW, statistics are required to support these three claims.
 
+#### Conclusions
+
+Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferent.
+
+For running a basic Linux server 2GB of RAM is an abudant luxury, therefore the limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
+
 ---
 
 ### Benchmark screenshot example
