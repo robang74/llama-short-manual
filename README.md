@@ -50,7 +50,9 @@ cmake -B build -DGGML_VULKAN=ON
 cmake --build build --config Release -j$(nproc)
 ```
 
-#### Testing after the build
+---
+
+### Testing after the build
 
 The `-ngl 0` excludes using the GPU completely, while the `--mlock` keep the model always in RAM:
 
@@ -66,7 +68,9 @@ The model is configured to reply without thinking and use in full the flash atte
 
 The context quantisation at 8-bit `-ctk q8_0 -ctv q8_0` keeps a good precision but halves the consumption of the RAM compared with the 16-bit natural representation.
 
-#### Expected performance on i5-8365
+---
+
+### Expected performance on i5-8365
 
 Testing question:
 
@@ -74,16 +78,59 @@ Testing question:
 
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
-- `Gemma-2-2b-it.Q4_k_m.gguf`: 40.5 Rt/s, 13.8 Wt/s, mem:img 2.0 / 1.59 GB
-- `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 16.1 Rtk/s, 5.8 tk/s, mem:img 2.3 / 3.08 GB
-- `Qwen3.5-4B-Q4_K_M.gguf`: 18.4 Rt/s, 6.9 Wt/s, mem:img 2.6 / 2.64 GB
+- `Gemma-2-2b-it.Q4_k_m.gguf`: 40.5 Rt/s, 13.8 Wt/s, mem:img 2.15 / 1.59 GB
+- `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 16.1 Rtk/s, 5.8 tk/s, mem:img 3.65 / 3.08 GB
+- `Qwen3.5-4B-Q4_K_M.gguf`: 18.4 Rt/s, 6.9 Wt/s, mem:img 3.64 / 2.64 GB
 
-The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the real RAM consumption, taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs (*).
+The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption (`available` difference), taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs.
 
 Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
 
-- `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf`:  15.9 Rt/s, 6.2 Wtk/s, mem:img 2.1 / 4.14 GB, 
+- `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf`:  15.9 Rt/s, 6.2 Wtk/s, mem:img 4.55 / 4.14 GB, 
 
 While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
 
-(*) The correct approach includes checking also the resident size in memory of the llama running the model.
+The correct full approach includes checking also the resident size in memory of the `llama` running the model (checking the `free` difference, also) and dropping the cache before the run:
+
+```
+$ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+$ free; llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
+               total        used        free      shared  buff/cache   available
+Mem:        16148684     5863108     8595136     1146284     1690440     8827828
+Swap:              0           0           0
+
+Loading model...  
+
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b9571-e3471b3e7
+model      : Qwen3.5-4B-Q4_K_M.gguf
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+> What is the name of the capital of France?
+
+The capital of France is **Paris**.
+
+[ Prompt: 18.6 t/s | Generation: 7.5 t/s ]
+
+(another console)$ free
+               total        used        free      shared  buff/cache   available
+Mem:        16148684     6166552     5072540     1266792     4909592     6403060
+
+> /exxit
+```
