@@ -119,7 +119,7 @@ Including the minimalistic surf that has a very low RAM footprint (128MB for the
 
 ### Expected performance on i5-8365
 
-Testing question:
+Testing prompt:
 
 > What is the name of the capital of France?
 
