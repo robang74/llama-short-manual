@@ -89,15 +89,15 @@ Testing question:
 
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
-- `Gemma-2-2b-it.Q4_k_m.gguf`: 40.5 Rt/s, 13.8 Wt/s, 2.15/1.59 GB
-- `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 16.1 Rtk/s, 5.8 tk/s, 3.65/3.08 GB
+- `Gemma-2-2b-it.Q4_k_m.gguf`: 47.4 Rt/s, 13.8 Wt/s, 2.15/1.59 GB
+- `Qwen3.5-4B-UD-Q5_K_XL.gguf`: 18.3 Rtk/s, 6.7 tk/s, 3.65/3.08 GB
 - `Qwen3.5-4B-Q4_K_M.gguf`: 26.8 Rt/s, 8.1 Wt/s, 3.64/2.64 GB
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption (`available` difference), taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs.
 
 Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
 
-- `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf`:  15.9 Rt/s, 6.2 Wtk/s, 4.55/4.14 GB, 
+- `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf`:  15.9 Rt/s, 6.6 Wtk/s, 4.55/4.14 GB, 
 
 While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
 
