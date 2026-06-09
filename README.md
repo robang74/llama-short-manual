@@ -33,6 +33,12 @@ In this scenario, few point to keep in consideration:
 
 The Q4 and the context are those points on which we can save RAM when the AI local model is supposed to always run in concurrence with a decent desktop activity.
 
+```sh
+sudo prlimit --pid=$$ --memlock=$((6<<30)):$((8<<30))
+```
+
+For an opimised llama functioning the line above rises the current shell memory allocation limits respectively at 6GB (soft) and 8GB (hard). To make this change permanent for the user without the need to of doing `sudo` each time, the new limits should be set into `/etc/security/limits.conf`.
+
 ---
 
 ### Native llama quick build
@@ -80,6 +86,25 @@ The model is configured to reply without thinking and use in full the flash atte
 
 The context quantisation at 8-bit `-ctk q8_0 -ctv q8_0` keeps a good precision but halves the consumption of the RAM compared with the 16-bit natural representation.
 
+Moreover, for telegraphic-style answering mode, append:
+
+- `-sys "You are a helpful assistant. Be concise in answering."`
+
+However this system prompt strongly influences the tests in a way that are much less comparable among different users / seeds, therefore it has not been used.
+
+---
+
+### Running the llama server
+
+Starting with the same for running llama-cli enviroment:
+
+```sh
+llama-server --mlock $options -c 4096 -m $model \
+  -np 1 --cache-ram 0
+```
+
+The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
+
 ---
 
 ### Expected performance on i5-8365
@@ -91,10 +116,10 @@ Testing question:
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
 - `Gemma-2-2b-it.Q4_k_m.gguf`: 47.4 Rt/s, 13.8 Wt/s, 2.15/1.59 GB
-- [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf?download=true): 18.3 Rtk/s, 6.7 tk/s, 3.65/3.08 GB
+- [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf?download=true): 18.3 Rtk/s, 6.7 Wtk/s, 3.65/3.08 GB
 - [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf?download=true): 26.8 Rt/s, 8.1 Wt/s, 3.64/2.64 GB
 
-The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption (`available` difference), taken after a Q/A, is a fraction of the model file size. This wasn't obvious but `free` output remains consistent across various runs.
+The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
 
 Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
 
@@ -153,3 +178,4 @@ Mem:        16148684     6166552     5072540     1266792     4909592     6403060
 ```
 > /exit
 ```
+
