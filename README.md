@@ -105,6 +105,8 @@ llama-server --mlock $options -c 4096 -m $model \
 
 The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
 
+The server can be started manually or as system service or at the user login time, and the AI chatbot can be accessed by every browser at `http://127.0.0.1:8080`.
+
 ---
 
 ### Expected performance on i5-8365
