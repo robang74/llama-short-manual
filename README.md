@@ -105,7 +105,15 @@ llama-server --mlock $options -c 4096 -m $model \
 
 The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
 
-The server can be started manually or as system service or at the user login time, and the AI chatbot can be accessed by every browser at `http://127.0.0.1:8080`.
+The server can be started manually or as system service or at the user login time, and the AI chatbot can be accessed at `http://127.0.0.1:8080` by a web browser.
+
+```sh
+sudo apt install surf
+aisurf() { GDK_BACKEND=x11 surf http://127.0.0.1:8080; }
+aisurf
+```
+
+Including the minimalistic surf that has a very low RAM footprint and it is safe to use for browsing a fully trusted local address like the one provided by the llama web server.
 
 ---
 
@@ -133,7 +141,14 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 
 ### Benchmark screenshot example
 
-The correct full approach includes checking also the resident size in memory of the `llama` running the model (checking the `free` difference, also) and dropping the cache before the run:
+The correct full approach includes checking also the resident size in memory of the `llama` instance running the model:
+
+```sh
+sudo apt install smem
+smem -P llama-server | grep -v python
+```
+
+But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `smem` output:
 
 ```sh
 $ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
