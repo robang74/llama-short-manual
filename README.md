@@ -67,11 +67,15 @@ The context quantisation at 8-bit `-ctk q8_0 -ctv q8_0` keeps a good precision b
 
 #### Expected performance on i5-8365
 
+Testing question:
+
+> What is the name of the capital of France?
+
 Note that off-loading to the GPU is slower than CPU-only:
 
-- `Gemma-2-2b-it.Q4_k_m.gguf` @ 13.3 tk/s
-- `Qwen3.5-4B-UD-Q5_K_XL.gguf` @ 5.7 tk/s
+- `Gemma-2-2b-it.Q4_k_m.gguf` @ 13.4 tk/s
+- `Qwen3.5-4B-UD-Q5_K_XL.gguf` @ 5.8 tk/s
 
 This because the i5's GPU cannot handle all the layers.
 
-Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder.
+Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
