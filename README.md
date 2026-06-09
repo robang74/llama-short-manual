@@ -130,6 +130,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | | &nbsp;tk/s | &nbsp;tk/s | &nbsp; GB | &nbsp; GB | &nbsp; GB |
 | `Gemma-2-2b-it.Q4_k_m.gguf` | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 |
 | [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 26.8 | &nbsp; 8.1 | **5.03** | 3.64 | 2.64 |
+| `Gemma-4-E4B-it-obliterated-Q4_K_M.gguf` | 23.2 | &nbsp; 7.5 | 7.40 | 6.78 | **4.97** |
 | [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 18.3 | &nbsp; 7.3 | 4.15 | 3.65 | 3.08 |
 | `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf` |  15.9 | &nbsp; 6.6 | **8.01** | 7.60 | 4.14 | 
 | [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 13.7 | &nbsp; 5.3 | 7.61 | 7.27 | 4.78 |
@@ -149,9 +150,9 @@ By Comparison, I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llama
 
 #### Conclusions
 
-Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferent.
+Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently.
 
-For running a basic Linux server 2GB of RAM is an abudant luxury, therefore the limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
+For running a basic Linux server 2GB of RAM is an abudant luxury, therefore the Llama memory limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
 
 ---
 
