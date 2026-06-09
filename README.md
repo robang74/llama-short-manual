@@ -1,4 +1,4 @@
-# Llama short manual
+# Llama Short Manual
 
 **`(c)`** 2026 – Roberto A. Foglietta &lt;roberto.foglietta@gmail.com&gt;, CC BY-NC-ND 4.0
 
@@ -15,7 +15,7 @@ For a target model between 2B and 7B parameters:
 - **CPU**: Intel i5-8265 or Ryzen 2500U
 - **RAM**: not less than 16GB w/ Ubuntu
 - **DDR4**: clock 2400Mhz in dual-channel
-- **GGUF** file size below the 6GB (cli)
+- **GGUF**: file size below 6GB (mem 8GB)
 
 Target quantisation between `Q4_0` and `Q5_K_XL`
 
