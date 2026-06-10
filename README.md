@@ -138,8 +138,8 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 |:-:| ----------- |:---:|:----:|:-----:|:----:|:---:|:----:|:---:|
 | | | eq. | tk/s | tk/s | GB | GB | GB | |
 | 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
-| 2 | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
-| 2 | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
+| 2¹ | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
+| 2² | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
 | 3 | `Gemma-4 E4B-it-qat UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 6.53 | 3.93 | 🟢 |
 | 4 | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 6.78 | 4.97 | — |
 | 5 | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | $${\color{lightgreen}\textbf{》4.15《}}$$ | 3.65 | 3.08 | ✔️ |
@@ -178,9 +178,13 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 
 I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llamafile` and the most significative differences are: 1) it seems faster in loading the model in `--chat` mode; 2) much more pressure on the system RAM, not because the model rather than binary code redundancy; 3) apparently slower in answering. BTW, statistics are required to support these three claims.
 
-Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements). Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model. The most relevant aspect is about Gemma-4 [Quantization Aware Training](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf) which suggests using `Q4_0` for the KV caches is **natively fine**.
+Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements). Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model. The most relevant aspect is about Gemma 4 [Quantization Aware Training](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf) which suggests using `Q4_0` for the KV caches is **natively fine**.
 
-Therefor `-ctk q4_0 -ctv q4_0` allowing a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
+Therefore `-ctk q4_0 -ctv q4_0` allows a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. To grant having memory for longer context window: 128K peaks at 9.66 GB, 64K at 8.55 GB. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
+
+Considering [Ubuntu base](https://wiki.ubuntu.com/Base) rootfs 22.04.5 and 24.04.4 are 28MB and a [minimal Linux system](https://github.com/robang74/uchaosys/blob/v073/docs/from-pre-kernel-boot-time-to-console.png) w/ kernel 5.15 can happily run within 24MB of RAM, there is a good chance to run also the 12B Gemma 4 with a large context windows on a dedicated machine with only 16GB of RAM (2x4GB in quad-channel).
+
+The real limit is set by the CPU's TDP and its thermal dissipation system, but desktop/mini PCs can easily deal with a 65W heat source, much more than 1.1-1.4 Kg laptops.
 
 #### Conclusions
 
