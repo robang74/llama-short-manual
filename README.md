@@ -168,6 +168,10 @@ The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the R
 
 Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
 
+Using `-t 8` there is a regression in performances, while using `--cpu-mask 0x0F` the test results are much more stable and aligned with the maximum values recorded in the table.
+
+Fundametally, it is a matter of CPU temperature that raises from 45°C to 65°C in the first 10s of computing, then CPU starts to trottle down: more threads more heat. A mask like `0x0F` spreads the heat uniformly on the four physical cores, thus a more repeatible outcome.
+
 While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
 
 #### By Comparison
