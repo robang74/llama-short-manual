@@ -43,6 +43,10 @@ For an opimised llama functioning the line above rises the current shell memory 
 
 ### Native llama quick build
 
+Compile your own llama binary set isn't mandatory for the most common OS configurations:
+
+- [llama.cpp releases by ggml.org](https://github.com/ggml-org/llama.cpp/releases) for Ubuntu, MacOS and Windows, supporting CPU-only, Vulkan, ROCm, OpenVINO, CUDA (only for Windows x64 otherwise llamafile) and HIP. 
+
 To compile your llama native build w/ Vulkan support on Ubuntu (22.04 LTS, in my case):
 
 ```sh
@@ -154,6 +158,8 @@ By Comparison, I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llama
 Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently.
 
 For running a basic Linux server 2GB of RAM is an abudant luxury, therefore the Llama memory limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
+
+Finally, looking at the llama pre-built [releases](#native-llama-quick-build), we can note that llamafile exists primarily because supporting CUDA on whatever OS apart from Windows x64 is a real pain. While llamafile with its 0.75GB extra on top of each model, detects and compiles on the fly the essential stuff for providing llama the support to deal with a local CUDA installation, if any.
 
 ---
 
