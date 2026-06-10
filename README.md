@@ -87,7 +87,9 @@ cd build/bin
 export PATH=$PWD:$PATH
 
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
-opts="-ctk q8_0 -ctv q8_0 -ngl 0 --mlock --mmap -t 4"
+opts="-ctk q8_0 -ctv q8_0 -ngl 0 --mlock --mmap"
+opts="$opts --swa-full  -t 4" # This is fundamental
+
 ./llama-cli $opts -c 4096 -rea off -fa on -m $model
 ```
 
