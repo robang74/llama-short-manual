@@ -137,7 +137,6 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | # | Model Name  | Size | Read | Write | Peak | Mem | File | Fit |
 |:-:| ----------- |:---:|:----:|:-----:|:----:|:---:|:----:|:---:|
 | | | eq. | tk/s | tk/s | GB | GB | GB | |
-| 0 | `Qwen-3.5 4B-MTP Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) | 4B | 16.0 | 7.1 | 3.91 | 3.39 | 2.91 | 🟢 |
 | 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
 | 2 | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
 | 2 | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
@@ -150,6 +149,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | | *By Comparison*: | | | | | |
 | A | `Gemma-2 2B-it Q4_K_M` | 2B | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 | — |
 | B | `Qwen-3.5 4B Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) ➡ [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) &nbsp;($${\color{lightgray}\textbf{size 3.75 GB}}$$) | 4B | 18.5 | 5.0 | **8.80** | 4.78 | 3.02 | ✔️ |
+| C | `Qwen-3.5 4B-MTP Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) | 4B | 16.0 | 7.1 | 3.91 | 3.39 | 2.91 | ✔️ |
 | | | | | | | |
 | | *Above Limits*: | | | | | |
 | 8 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
@@ -203,17 +203,20 @@ drpc; echo "/exit" | time -p sh \
 
 As anticipated the llamafile is faster at start-up time:
 
-| Model    | Size  | Quant.  | File | Real | User | Sys  | Range |
-| -------- |:----- |:------- |:----:|:----:|:----:|:----:|:-----:|
-| Qwen-3.5 | 4B    | Q4_K_M  | 2.64 | 5.64 | 3.94 | 1.51 | min   |
-|          |       |         |      | 5.78 | 4.08 | 1.75 | max   |
-|          |       |         |      |      |      |      |       |
-| Qwen-3.5 | 4B-UD | Q5_K_XL | 3.08 | 4.64 | 3.01 | 1.40 | min   |
-|          |       |         |      | 4.85 | 3.12 | 1.62 | max   |
-|          |       |         |      |      |      |      |       |
-| **.llamafile**:  |  |  | **3.75** |      |      |      |       |
-| Qwen-3.5 | 4B    | Q5_K_S  | 3.02 | 3.88 | 0.76 | 1.59 | min   |
-|          |       |         |      | 4.00 | 1.08 | 1.81 | max   |
+| Model    | Size   | Quant.  | File | Real | User | Sys  | Range |
+| -------- |:------ |:------- |:----:|:----:|:----:|:----:|:-----:|
+| Qwen-3.5 | 4B     | Q4_K_M  | 2.64 | 5.64 | 3.94 | 1.51 | min   |
+|          |        |         |      | 5.78 | 4.08 | 1.75 | max   |
+|          |        |         |      |      |      |      |       |
+| Qwen-3.5 | 4B-UD  | Q5_K_XL | 3.08 | 4.64 | 3.01 | 1.40 | min   |
+|          |        |         |      | 4.85 | 3.12 | 1.62 | max   |
+|          |        |         |      |      |      |      |       |
+| Qwen-3.5 | 4B-MTP | Q5_K_S  | 2.91 | 4.09 | 2.91 | 1.18 | min   |
+|          |        |         |      | 4.20 | 3.00 | 1.27 | max   |
+|          |        |         |      |      |      |      |       |
+| **.llamafile**:   |  |  | **3.75** |      |      |      |       |
+| Qwen-3.5 | 4B     | Q5_K_S  | 3.02 | 3.88 | 0.76 | 1.59 | min   |
+|          |        |         |      | 4.00 | 1.08 | 1.81 | max   |
 
 The user timings aren't comparable with the .llama one due to `sh` use.
 
