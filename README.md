@@ -152,6 +152,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | 9 | `Gemma-4 12B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) (*mem. 14 GB*) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
 - **NOTE n.1**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 - **NOTE n.2**: some models are more verbose and their Wt/k drop, hence verbosity is a fair penality.
+- **NOTE n.3**: tests were completed before adding `--mmap`, which by defaut is enabled.
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
 
@@ -171,26 +172,59 @@ Finally, looking at the llama pre-built [releases](#native-llama-quick-build), w
 
 ---
 
+### Model loading time
+
+A quick way to test the start time which includes the model loading is to pass as the first prompt the exit command. In this way it is possible to compare the starting time among various models and by a fair comparison with llamafile using the same model:
+
+```sh
+drpc() { sync; echo 3 | sudo tee /proc/sys/vm/drop_caches; }
+
+topt="$opts -c 4096 -rea off -fa on"
+
+drpc; time -p ./llama-cli $topt -p "/exit" \
+  -m Qwen3.5-4B-Q4_K_M.gguf
+
+drpc; echo "/exit" | time -p sh \
+  ./Qwen3.5-4B-Q5_K_S.llamafile --chat $topt
+```
+
+As anticipated the llamafile is faster at start-up time:
+
+| Model    | Size  | Quant.  | File | Real | User | Sys  | Range |
+| -------- |:----- |:------- |:----:|:----:|:----:|:----:|:-----:|
+| Qwen-3.5 | 4B    | Q4_K_M  | 2.64 | 5.64 | 3.94 | 1.51 | min   |
+|          |       |         |      | 5.78 | 4.08 | 1.75 | max   |
+|          |       |         |      |      |      |      |       |
+| Qwen-3.5 | 4B-UD | Q5_K_XL | 3.08 | 4.64 | 3.01 | 1.40 | min   |
+|          |       |         |      | 4.85 | 3.12 | 1.62 | max   |
+|          |       |         |      |      |      |      |       |
+| **.llamafile**:  |  |  | **3.75** |      |      |      |       |
+| Qwen-3.5 | 4B    | Q5_K_S  | 3.02 | 3.88 | 0.76 | 1.59 | min   |
+|          |       |         |      | 4.00 | 1.08 | 1.81 | max   |
+
+The user timings aren't comparable with the .llama one due to `sh` use.
+
+---
+
 ### Benchmark screenshot example
 
 The correct full approach includes checking also the resident size in memory of the `llama` instance running the model:
 
 ```sh
 pmem() { grep ^Vm /proc/$(pgrep $1)/status; }
-pmem llama-cli
+pmem llama-cli | grep VmPeak
 ```
 
 But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
 
 ```sh
-$ sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
-$ free; ./llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
+$ drpc; free; ./llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
                total        used        free      shared  buff/cache   available
 Mem:        16148684     5863108     8595136     1146284     1690440     8827828
 Swap:              0           0           0
 ```
 ```
-Loading model...  
+Loading model...
 
 
 ▄▄ ▄▄
