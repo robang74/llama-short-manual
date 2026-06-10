@@ -87,8 +87,8 @@ cd build/bin
 export PATH=$PWD:$PATH
 
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
-opts="-ctk q8_0 -ctv q8_0 -ngl 0 --mlock --mmap"
-opts="$opts --swa-full  -t 4" # This is fundamental
+opts="-ngl 0 --mlock --mmap --cpu-mask 0x0F --no-mmproj"
+opts="$opts -ctk q8_0 -ctv q8_0 --swa-full --offline -t 4"
 
 ./llama-cli $opts -c 4096 -rea off -fa on -m $model
 ```
@@ -111,7 +111,7 @@ Starting with the same for running llama-cli enviroment:
 
 ```sh
 ./llama-server $opts -c 4096 -rea off -fa on -m $model \
-  --offline --temperature 0.5 -np 1 --cache-ram 0 --no-mmproj
+    --temperature 0.5 -np 1 --cache-ram 0
 ```
 
 The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
@@ -138,15 +138,18 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 
 | # | Model Name  | Size | Read | Write | Peak | Mem | File | Fit |
 |:-:| ----------- |:---:|:----:|:-----:|:----:|:---:|:----:|:---:|
-| | | eq. | tk/s | tk/s | GB | GB | GB | |
-| 0 | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{ctk/ctv q4_0}}$$) | (4B) | 54.8 | 22.4 | 2.96 | 2.04 | 2.04 | 🟢 |
+| | | `eq.` | `tk/s` | `tk/s` | `GB` | `GB` | `GB` | |
+| | | | | | | |
+| 0¹ | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{wNa8o8}}$$) | (4B) | 70.7 | 22.4 | $${\color{lightgreen}\textbf{》2.96《}}$$ | 2.53 | $${\color{lightgreen}\textbf{》2.04《}}$$ | 🟢 |
+| 0² | `Gemma-4 E2B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf?download=true) &nbsp;($${\color{lightgray}\textbf{full 4K @Q4{\\_}0}}$$) | (4B) | 58.6 | 16.6 | 4.68 | 4.40 | 3.12 | 🟢 |
+| | | | | | | |
 | 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
 | 2¹ | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
 | 2² | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
 | 3 | `Gemma-4 E4B-it-qat UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 6.53 | 3.93 | 🟢 |
 | 4 | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 6.78 | 4.97 | — |
 | 5 | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | $${\color{lightgreen}\textbf{》4.15《}}$$ | 3.65 | 3.08 | ✔️ |
-| 6 | `NextCoder 7B i1-Q4_K_M` [gguf](https://huggingface.co/mradermacher/NextCoder-7B-i1-GGUF/resolve/main/NextCoder-7B.i1-Q4_K_M.gguf) | 7B | 17.8 | $${\color{lightgray}\textbf{》6.0《}}$$ | 7.86 | 7.54 | 4.36 | ✔️ |
+| 6 | `NextCoder 7B i1-Q4_K_M` [gguf](https://huggingface.co/mradermacher/NextCoder-7B-i1-GGUF/resolve/main/NextCoder-7B.i1-Q4_K_M.gguf) | 7B | 17.8 | $${\color{lightgray}\textbf{》6.0《}}$$ | 7.86 | 7.54 | 4.36 | ☑️ |
 | 7 | `DeepSeek-R1-distill-Qwen 7B-uncensored i1-Q4_0` | 7B |  15.9 | 6.6 | **8.01** | 7.60 | 4.14 | — |
 | 8 | `Apertus 8B-instruct-2509 UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 8B | 13.7 | $${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 7.27 | 4.78 | ☑️ |
 | | | | | | | |
@@ -157,14 +160,14 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | | | | | | | |
 | | *Above Limits*: | | | | | |
 | 9 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
-| 10 | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
+| 10 | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.2 | 11.9 | 6.50 | 🔶 |
 
 #### Table's Notes
 
 - The human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 - Some models are more verbose and their Wt/k drop, hence verbosity is a fair penality.
 - Energy saving mode (max 15W TDP) otherwise i5-8365 gets hot and drops the frequency.
-- Tests were completed before adding `--mmap`, which by defaut is enabled.
+- Tests were completed before adding `--mmap`, which by defaut is enabled, and `--swa-full`.
 
 #### Data Evaluation
 
@@ -259,7 +262,7 @@ pmem llama-cli | grep VmPeak
 But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
 
 ```sh
-$ drpc; free; ./llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
+$ drpc; free; ./llama-cli $topt -m $model;
                total        used        free      shared  buff/cache   available
 Mem:        16148684     5863108     8595136     1146284     1690440     8827828
 Swap:              0           0           0
