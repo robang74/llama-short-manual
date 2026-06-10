@@ -182,9 +182,17 @@ Gemma 4's memory values collected are aligned with Google [specifications](https
 
 Therefore `-ctk q4_0 -ctv q4_0` allows a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. To grant having memory for longer context window: 128K peaks at 9.66 GB, 64K at 8.55 GB. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
 
+#### Thermalisation
+
 Considering [Ubuntu base](https://wiki.ubuntu.com/Base) rootfs 22.04.5 and 24.04.4 are 28MB and a [minimal Linux system](https://github.com/robang74/uchaosys/blob/v073/docs/from-pre-kernel-boot-time-to-console.png) w/ kernel 5.15 can happily run within 24MB of RAM, there is a good chance to run also the 12B Gemma 4 with a large context windows on a dedicated machine with only 16GB of RAM (2x4GB in quad-channel).
 
 The real limit is set by the CPU's TDP and its thermal dissipation system, but desktop/mini PCs can easily deal with a 65W heat source, much more than 1.1-1.4 Kg laptops.
+
+PassMark and similar burst benchmarks are misleading for llama.cpp workloads. A laptop CPU (`i5-8365U, 15W TDP`) rated at 6000 points throttles to 800 MHz under sustained workload by 4 threads, while a workstation CPU (`E5-1620 v4, 140W TDP`) rated at 7000 points sustains 3.5 GHz on all 8 threads.
+
+The real throughput factor is not 20% but 9× (`140:15 = 875%`), proportional to TDP budget and thermal design which is directly related with the mass of the computer.
+
+Surprisingly, AI workload is currently more similar to a steam locomotive in its relationship with energy rather than information technology, until someone shifts this paradigm.
 
 #### Conclusions
 
