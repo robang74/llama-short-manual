@@ -227,6 +227,7 @@ As anticipated the llamafile is faster at start-up time:
 
 - The `user` timings aren't comparable with the .llama one due to the `sh` usage.
 - Two seconds (`5.78 - 3.88`) can be perceived but `4B-MTP` load is just 5% slower.
+- The SSD `hdparm` troughtput is 17GB/s cached reads, model matters more than its size.
 
 ---
 
