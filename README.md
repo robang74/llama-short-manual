@@ -149,7 +149,8 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | *Above Limits*: | | | | | |
 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*mem. 12 GB*) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
 | `Gemma-4 12B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) (*mem. 14 GB*) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
-- **NOTE**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
+- **NOTE n.1**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
+- **NOTE n.2**: some models are more verbose and their Wt/k drop, hence verbosity is a fair penality.
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
 
