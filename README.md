@@ -139,6 +139,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | # | Model Name  | Size | Read | Write | Peak | Mem | File | Fit |
 |:-:| ----------- |:---:|:----:|:-----:|:----:|:---:|:----:|:---:|
 | | | eq. | tk/s | tk/s | GB | GB | GB | |
+| 0 | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{ctk/ctv q4_0}}$$) | (4B) | 54.8 | 22.4 | 2.96 | 2.04 | 2.04 | 🟢 |
 | 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
 | 2¹ | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
 | 2² | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
