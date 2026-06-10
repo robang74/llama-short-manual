@@ -109,7 +109,7 @@ Starting with the same for running llama-cli enviroment:
 
 ```sh
 ./llama-server $opts -c 4096 -rea off -fa on -m $model \
-  -np 1 --cache-ram 0 --temperature 0.5 --offline
+  --offline --temperature 0.5 -np 1 --cache-ram 0
 ```
 
 The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
