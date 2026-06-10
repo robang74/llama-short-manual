@@ -134,20 +134,20 @@ Testing prompt:
 
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
-| Model Name  | Read | Write | Peak | Mem | File |
-| ----------- | ---- | ----- | ---- | --- | ---- |
-| | &nbsp;tk/s | &nbsp;tk/s | &nbsp; GB | &nbsp; GB | &nbsp; GB |
-| `Gemma-2-2b-it.Q4_k_m.gguf` | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 |
-| [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 26.8 | &nbsp; 8.1 | **5.03** | 3.64 | 2.64 |
-| `Gemma-4-E4B-it-obliterated-Q4_K_M.gguf` | 23.2 | &nbsp; 7.5 | 7.40 | 6.78 | **4.97** |
-| [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 18.3 | &nbsp; 7.3 | 4.15 | 3.65 | 3.08 |
-| `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf` |  15.9 | &nbsp; 6.6 | **8.01** | 7.60 | 4.14 | 
-| [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 13.7 | &nbsp; 5.3 | 7.61 | 7.27 | 4.78 |
+| Model Name  | Read | Write | Peak | Mem | File | Fit |
+| ----------- |:----:|:-----:|:----:|:---:|:----:|:---:|
+| | &nbsp;tk/s | &nbsp;tk/s | &nbsp; GB | &nbsp; GB | &nbsp; GB | |
+| `Gemma-2-2b-it.Q4_k_m.gguf` | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 | — |
+| [`Qwen3.5-4B-Q4_K_M.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | **5.03** | 3.64 | 2.64 | ✅ |
+| `Gemma-4-E4B-it-obliterated-Q4_K_M.gguf` | 23.2 | 7.5 | 7.40 | 6.78 | **4.97** | — |
+| [`Qwen3.5-4B-UD-Q5_K_XL.gguf`](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | 4.15 | 3.65 | 3.08 | ✔️ |
+| `DeepSeek-R1-Distill-Qwen-7B-Uncensored.i1-Q4_0.gguf` |  15.9 | 6.6 | **8.01** | 7.60 | 4.14 | — |
+| [`Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 13.7 | $${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 7.27 | 4.78 | ☑️ |
 | *By Comparison*: | | | | | |
-| [`Qwen3.5-4B-Q5_K_S`](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) **.** [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) (3.75 GB) | 18.5 | &nbsp; 5.0 | 8.80 | 4.78 | 3.02 |
+| [`Qwen3.5-4B-Q5_K_S`](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) **.** [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) (*file size 3.75 GB*) | 18.5 | 5.0 | **8.80** | 4.78 | 3.02 | ✔️ |
 | *Above Limits*: | | | | | |
-| [`Gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*w/ mem. lim. 12GB*) | &nbsp; 8.9 | &nbsp; 3.6 | 12.2 | 11.6 | 6.86 |
-| [`Gemma-4-12b-it-qat-q4_0.gguf`](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) (*w/ mem. lim. 14GB*) | &nbsp; 9.1 | &nbsp; 4.0 | 13.1 | 11.9 | 6.50 |
+| [`Gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*w/ mem. lim. 12 GB*) | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
+| [`Gemma-4-12b-it-qat-q4_0.gguf`](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) (*w/ mem. lim. 14 GB*) | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
 - **NOTE**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
