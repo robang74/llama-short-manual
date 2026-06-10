@@ -153,7 +153,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | | | | | | | |
 | | *Above Limits*: | | | | | |
 | 8 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
-| 9 | `Gemma-4 12B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
+| 9 | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
 
 #### Table's Notes
 
@@ -174,7 +174,9 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 
 I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llamafile` and the most significative differences are: 1) it seems faster in loading the model in `--chat` mode; 2) much more pressure on the system RAM, not because the model rather than binary code redundancy; 3) apparently slower in answering. BTW, statistics are required to support these three claims.
 
-Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements). Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model. The most relevant aspect is about Gemma-4 [Quantization Aware Training](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf) which suggests using `Q4_0` for the KV caches is **natively fine** `-ctk q4_0 -ctv q4_0` allowing a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit.
+Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements). Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model. The most relevant aspect is about Gemma-4 [Quantization Aware Training](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf) which suggests using `Q4_0` for the KV caches is **natively fine**.
+
+Therefor `-ctk q4_0 -ctv q4_0` allowing a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
 
 #### Conclusions
 
