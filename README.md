@@ -159,6 +159,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 
 - The human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 - Some models are more verbose and their Wt/k drop, hence verbosity is a fair penality.
+- Energy saving mode (max 15W TDP) otherwise i5-8365 gets hot and drops the frequency.
 - Tests were completed before adding `--mmap`, which by defaut is enabled.
 
 #### Data Evaluation
