@@ -84,11 +84,11 @@ The `-ngl 0` excludes using the GPU completely, while the `--mlock` keep the mod
 ```sh
 cd build/bin
 # Use this to call these binaries from anywhere
-# export PATH=$PWD:$PATH
+export PATH=$PWD:$PATH
 
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
-options="-ctk q8_0 -ctv q8_0 -rea off -fa on -t 4"
-./llama-cli --mlock $options -c 4096 -ngl 0 -m $model
+opts="-ctk q8_0 -ctv q8_0 -ngl 0 --mlock --mmap -t 4"
+./llama-cli $opts -c 4096 -rea off -fa on -m $model
 ```
 
 The model is configured to reply without thinking and use in full the flash attention `-fa on` which reduces the consumption of the RAM compared the same amount of tokens for the context `-c 4096`.
@@ -108,8 +108,8 @@ However this system prompt strongly influences the tests in a way that are much 
 Starting with the same for running llama-cli enviroment:
 
 ```sh
-./llama-server --mlock $options -c 4096 -m $model \
-  -np 1 --cache-ram 0
+./llama-server $opts -c 4096 -rea off -fa on -m $model \
+  -np 1 --cache-ram 0 --temperature 0.5 --offline
 ```
 
 The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
