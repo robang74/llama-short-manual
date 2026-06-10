@@ -188,7 +188,7 @@ Considering [Ubuntu base](https://wiki.ubuntu.com/Base) rootfs 22.04.5 and 24.04
 
 The real limit is set by the CPU's TDP and its thermal dissipation system, but desktop/mini PCs can easily deal with a 65W heat source, much more than 1.1-1.4 Kg laptops.
 
-PassMark and similar burst benchmarks are misleading for llama.cpp workloads. A laptop CPU (`i5-8365U, 15W TDP`) rated at 6000 points throttles to 800 MHz under sustained workload by 4 threads, while a workstation CPU (`E5-1620 v4, 140W TDP`) rated at 7000 points sustains 3.5 GHz on all 8 threads.
+PassMark and similar [burst benchmarks](img/beanchmark-xeon4-vs-core5.png) are misleading for llama.cpp workloads. A laptop CPU (`i5-8365U, 15W TDP`) rated at 6000 points throttles to 800 MHz under sustained workload by 4 threads, while a workstation CPU (`E5-1620 v4, 140W TDP`) rated at 7000 points sustains 3.5 GHz on all 8 threads.
 
 The real throughput factor is not 20% but 9× (`140:15 = 875%`), proportional to TDP budget and thermal design which is directly related with the mass of the computer.
 
