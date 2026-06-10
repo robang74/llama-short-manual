@@ -225,7 +225,8 @@ As anticipated the llamafile is faster at start-up time:
 | Qwen-3.5 | 4B     | Q5_K_S  | 3.02 | 3.88 | 0.76 | 1.59 | min   |
 |          |        |         |      | 4.00 | 1.08 | 1.81 | max   |
 
-The user timings aren't comparable with the .llama one due to `sh` use.
+- The `user` timings aren't comparable with the .llama one due to the `sh` usage.
+- Two seconds (`5.78 - 3.88`) can be perceived but `4B-MTP` load is just 5% slower.
 
 ---
 
