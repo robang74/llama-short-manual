@@ -81,10 +81,12 @@ The `-ngl 0` excludes using the GPU completely, while the `--mlock` keep the mod
 
 ```sh
 cd build/bin
-export PATH=$PWD:$PATH
+# Use this to call these binaries from anywhere
+# export PATH=$PWD:$PATH
+
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
 options="-ctk q8_0 -ctv q8_0 -rea off -fa on -t 4"
-llama-cli --mlock $options -c 4096 -ngl 0 -m $model
+./llama-cli --mlock $options -c 4096 -ngl 0 -m $model
 ```
 
 The model is configured to reply without thinking and use in full the flash attention `-fa on` which reduces the consumption of the RAM compared the same amount of tokens for the context `-c 4096`.
@@ -104,7 +106,7 @@ However this system prompt strongly influences the tests in a way that are much 
 Starting with the same for running llama-cli enviroment:
 
 ```sh
-llama-server --mlock $options -c 4096 -m $model \
+./llama-server --mlock $options -c 4096 -m $model \
   -np 1 --cache-ram 0
 ```
 
@@ -157,9 +159,9 @@ By Comparison, I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llama
 
 Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently.
 
-For running a basic Linux server 2GB of RAM is an abudant luxury, therefore the Llama memory limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
+For running a basic Linux server 2GB of RAM is an "abundant luxury", therefore the Llama memory limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
 
-Finally, looking at the llama pre-built [releases](#native-llama-quick-build), we can note that llamafile exists primarily because supporting CUDA on whatever OS apart from Windows x64 is a real pain. While llamafile with its 0.75GB extra on top of each model, detects and compiles on the fly the essential stuff for providing llama the support to deal with a local CUDA installation, if any.
+Finally, looking at the llama pre-built [releases](#native-llama-quick-build), we can note that llamafile exists primarily for supporting CUDA on whatever OS apart from Windows x64 is a real pain. While llamafile with its 0.75GB extra on top of each AI model, detects and compiles on the fly the essential stuff for providing llama the support to deal with a local CUDA installation, if any.
 
 ---
 
