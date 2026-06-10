@@ -137,27 +137,29 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | # | Model Name  | Size | Read | Write | Peak | Mem | File | Fit |
 |:-:| ----------- |:---:|:----:|:-----:|:----:|:---:|:----:|:---:|
 | | | eq. | tk/s | tk/s | GB | GB | GB | |
-| 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | ✅ |
-| 2 | `Gemma-4 E4B-it q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | **8B** | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ☑️ |
-| 3 | `Gemma-4 E4B-it-qat UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | **8B** | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 6.53 | 3.93 | ✅ |
-| 4 | `Gemma-4 E4B-it-obliterated Q4_K_M` | **8B** | 23.2 | 7.5 | 7.40 | 6.78 | 4.97 | — |
+| 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
+| 2 | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
+| 2 | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
+| 3 | `Gemma-4 E4B-it-qat UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 6.53 | 3.93 | 🟢 |
+| 4 | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 6.78 | 4.97 | — |
 | 5 | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | $${\color{lightgreen}\textbf{》4.15《}}$$ | 3.65 | 3.08 | ✔️ |
 | 6 | `DeepSeek-R1-distill-Qwen 7B-uncensored i1-Q4_0` | 7B |  15.9 | 6.6 | **8.01** | 7.60 | 4.14 | — |
 | 7 | `Apertus 8B-instruct-2509 UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 8B | 13.7 | $${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 7.27 | 4.78 | ☑️ |
+| | | | | | | |
 | | *By Comparison*: | | | | | |
 | A | `Gemma-2 2B-it Q4_K_M` | 2B | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 | — |
-| B | `Qwen-3.5 4B Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) ➡ [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) (*size 3.75 GB*) | 4B | 18.5 | 5.0 | **8.80** | 4.78 | 3.02 | ✔️ |
+| B | `Qwen-3.5 4B Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) ➡ [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) &nbsp;($${\color{lightgray}\textbf{size 3.75 GB}}$$) | 4B | 18.5 | 5.0 | **8.80** | 4.78 | 3.02 | ✔️ |
+| | | | | | | |
 | | *Above Limits*: | | | | | |
-| 8 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*mem. 12 GB*) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
-| 9 | `Gemma-4 12B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) (*mem. 14 GB*) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
+| 8 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
+| 9 | `Gemma-4 12B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.1 | 11.9 | 6.50 | 🔶 |
+| N | `Qwen-3.5 4B-MTP Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) | 4B | Rtk/s | Wtk/s | peak | free | 3.12 | flag |
 
 #### Table's Notes
 
 - The human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 - Some models are more verbose and their Wt/k drop, hence verbosity is a fair penality.
 - Tests were completed before adding `--mmap`, which by defaut is enabled.
-- Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements).
-- Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model.
 
 #### Data Evaluation
 
@@ -170,6 +172,8 @@ While the `Q4_0` might seems obsolete, it is way faster when the model is relati
 #### By Comparison
 
 I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llamafile` and the most significative differences are: 1) it seems faster in loading the model in `--chat` mode; 2) much more pressure on the system RAM, not because the model rather than binary code redundancy; 3) apparently slower in answering. BTW, statistics are required to support these three claims.
+
+Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements). Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model. The most relevant aspect is about Gemma-4 [Quantization Aware Training](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf) which suggests using `Q4_0` for the KV caches is **natively fine** `-ctk q4_0 -ctv q4_0` allowing a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit.
 
 #### Conclusions
 
