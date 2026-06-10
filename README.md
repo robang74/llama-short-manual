@@ -45,7 +45,9 @@ For an opimised llama functioning the line above rises the current shell memory 
 
 Compile your own llama binary set isn't mandatory for the most common OS configurations:
 
-- [llama.cpp releases by ggml.org](https://github.com/ggml-org/llama.cpp/releases) for Ubuntu, MacOS and Windows, supporting CPU-only, Vulkan, ROCm, OpenVINO, CUDA (only for Windows x64 otherwise llamafile) and HIP. 
+- [llama.cpp releases by ggml.org](https://github.com/ggml-org/llama.cpp/releases) for Ubuntu, MacOS and Windows,
+- supporting: CPU-only, Vulkan, ROCm, OpenVINO, CUDA (*) and HIP
+- (*) CUDA support available only for Windows x64 otherwise llamafile
 
 To compile your llama native build w/ Vulkan support on Ubuntu (22.04 LTS, in my case):
 
@@ -144,7 +146,8 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | *By Comparison*: | | | | | |
 | [`Qwen3.5-4B-Q5_K_S`](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) **.** [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) (3.75 GB) | 18.5 | &nbsp; 5.0 | 8.80 | 4.78 | 3.02 |
 | *Above Limits*: | | | | | |
-| [`gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*w/ mem. lim. 12GB*) | &nbsp; 8.9 | &nbsp; 3.6 | 12.2 | 11.6 | 6.86 |
+| [`Gemma-4-12b-it-UD-Q4_K_XL.gguf`](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) (*w/ mem. lim. 12GB*) | &nbsp; 8.9 | &nbsp; 3.6 | 12.2 | 11.6 | 6.86 |
+| [`Gemma-4-12b-it-qat-q4_0.gguf`](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) (*w/ mem. lim. 14GB*) | &nbsp; 9.1 | &nbsp; 4.0 | 13.1 | 11.9 | 6.50 |
 - **NOTE**: the human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
@@ -177,8 +180,8 @@ pmem llama-cli
 But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
 
 ```sh
-$ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
-$ free; llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
+$ sudo sh -c "sync; echo 3 > /proc/sys/vm/drop_caches"
+$ free; ./llama-cli --mlock $options -c 4096 -ngl 0 -m $model;
                total        used        free      shared  buff/cache   available
 Mem:        16148684     5863108     8595136     1146284     1690440     8827828
 Swap:              0           0           0
