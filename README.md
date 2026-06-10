@@ -187,7 +187,7 @@ Therefore `-ctk q4_0 -ctv q4_0` allows a relatively huge 32K context window `-c 
 
 Considering [Ubuntu base](https://wiki.ubuntu.com/Base) rootfs 22.04.5 and 24.04.4 are 28MB and a [minimal Linux system](https://github.com/robang74/uchaosys/blob/v073/docs/from-pre-kernel-boot-time-to-console.png) w/ kernel 5.15 can happily run within 24MB of RAM, there is a good chance to run also the 12B Gemma 4 with a large context windows on a dedicated machine with only 16GB of RAM (2x4GB in quad-channel).
 
-The real limit is set by the CPU's TDP and its thermal dissipation system, but desktop/mini PCs can easily deal with a 65W heat source, much more than 1.1-1.4 Kg laptops.
+The real limit is set by the CPU's TDP and its thermal dissipation system, but desktop/mini PCs can easily deal with a 65W heat source, much more than 1.1-1.4 Kg laptops. While an old [Xeon workstation](https://robang74.github.io/chatbots-for-fun/html/nvidia-sw-stack-installation-for-k80.html#too-many-unknowns-to-face) can easily handle twice a consumer desktop.
 
 PassMark and similar [burst benchmarks](img/beanchmark-xeon4-vs-core5.png) are misleading for llama.cpp workloads. A laptop CPU (`i5-8365U, 15W TDP`) rated at 6000 points throttles to 800 MHz under sustained workload by 4 threads, while a workstation CPU (`E5-1620 v4, 140W TDP`) rated at 7000 points sustains 3.5 GHz on all 8 threads.
 
