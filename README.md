@@ -4,7 +4,7 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
-A short manual to run AI locally on your PC/laptop w/ decent performance despite minimal HW requisites-
+A short manual to run AI locally on your PC/laptop w/ decent performance despite minimal HW requisites and how to choose the best AI model to run locally which fits your HW and your needs. Which soon developed into a bottle-neck root-cause investigation paper supported by benchmarks and configurations testing.
 
 ---
 
