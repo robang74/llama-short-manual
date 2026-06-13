@@ -41,6 +41,25 @@ For an opimised llama functioning the line above rises the current shell memory 
 
 ---
 
+### Vulkan SDK (optional)
+
+Unless you have a serious video cards but an integrated one, the GPU will not effectively support you AI workload but slow down it.
+
+However, if you do not try, you do not known. So, here below how to install the Vulkan SDK last version available for Ubuntu 22.04:
+
+```
+wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc |
+  sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
+sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.4.313-jammy.list \
+  https://packages.lunarg.com/vulkan/1.4.313/lunarg-vulkan-1.4.313-jammy.list
+sudo apt update
+sudo apt install vulkan-sdk
+```
+
+For the Ubuntu 24.04, replace Jammy with Noble.
+
+---
+
 ### Native llama quick build
 
 Compile your own llama binary set isn't mandatory for the most common OS configurations:
@@ -53,10 +72,10 @@ To compile your llama native build w/ Vulkan support on Ubuntu (22.04 LTS, in my
 
 ```sh
 sudo apt update
-sudo apt install git build-essential cmake libvulkan1 \
-  mesa-vulkan-drivers vulkan-tools libvulkan-dev vulkan-sdk \
+sudo apt install git build-essential cmake ccache \
+  mesa-vulkan-drivers vulkan-tools libvulkan-dev libvulkan1 \
   glslang-tools glslang-dev glslang-tools libopenblas-dev \
-  pciutils libcurl4-openssl-dev
+  glslc pciutils libcurl4-openssl-dev
 # optional and useless with -DLLAMA_SERVER_LLAMAUI=OFF
 # sudo apt install nodejs npm
 
