@@ -56,7 +56,7 @@ sudo apt update
 sudo apt install vulkan-sdk
 ```
 
-For the Ubuntu 24.04, replace Jammy with Noble.
+For the Ubuntu 24.04, replace Jammy with Noble. This SDK already contains its own `glslc` package which conflicts with the Ubuntu's one. In case of failure, you can chose for `-DGGML_VULKAN=OFF` in building or `sudo apt purge glslc` to cleanly install the Vulkan SDK's version.
 
 ---
 
