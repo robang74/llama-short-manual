@@ -45,7 +45,7 @@ For an opimised llama functioning the line above rises the current shell memory 
 
 Unless you have a serious video cards but an integrated one, the GPU will not effectively support you AI workload but slow down it.
 
-However, if you do not try, you do not known. So, here below how to install the Vulkan SDK last version available for Ubuntu 22.04:
+However, if you do not try, you do not known. So, here below how to install the [Vulkan SDK](https://packages.lunarg.com/#) last version available for Ubuntu 22.04:
 
 ```
 wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc |
