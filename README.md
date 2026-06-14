@@ -45,18 +45,19 @@ For an opimised llama functioning the line above rises the current shell memory 
 
 Unless you have a serious video cards but an integrated one, the GPU will not effectively support you AI workload but slow down it.
 
-However, if you do not try, you do not known. So, here below how to install the [Vulkan SDK](https://packages.lunarg.com/#) last version available for Ubuntu 22.04:
+However, if you do not try, you do not known. So, here below how to install the [Vulkan SDK](https://packages.lunarg.com/#) last version available for Ubuntu 22.04 (jammy) and 24.04 (noble):
 
 ```
+distname=$(lsb_release -cs)
 wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc |
   sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
-exho "deb https://packages.lunarg.com/vulkan jammy main" |
+echo "deb https://packages.lunarg.com/vulkan $distname main" |
   sudo tee /etc/apt/sources.list.d/lunarg-vulkan.list
 sudo apt update
 sudo apt install vulkan-sdk
 ```
 
-For the Ubuntu 24.04, replace Jammy with Noble. This SDK already contains its own `glslc` package which conflicts with the Ubuntu's one. In case of failure, you can chose for `-DGGML_VULKAN=OFF` in building or `sudo apt purge glslc` to cleanly install the Vulkan SDK's version.
+This SDK already contains its own `glslc` package which conflicts with the Ubuntu's one. In case of failure, you can chose for `-DGGML_VULKAN=OFF` in building or `sudo apt purge glslc` to cleanly install the Vulkan SDK's version.
 
 ---
 
