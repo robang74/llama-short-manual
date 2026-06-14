@@ -50,8 +50,8 @@ However, if you do not try, you do not known. So, here below how to install the 
 ```
 wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc |
   sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
-sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.4.313-jammy.list \
-  https://packages.lunarg.com/vulkan/1.4.313/lunarg-vulkan-1.4.313-jammy.list
+exho "deb https://packages.lunarg.com/vulkan jammy main" |
+  sudo tee /etc/apt/sources.list.d/lunarg-vulkan.list
 sudo apt update
 sudo apt install vulkan-sdk
 ```
