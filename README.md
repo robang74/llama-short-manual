@@ -4,6 +4,8 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
+#### Revision 75
+
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
 ---
