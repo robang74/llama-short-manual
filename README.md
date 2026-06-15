@@ -96,7 +96,8 @@ cmake -B build -DGGML_VULKAN=ON -DGGML_BLAS=OFF \
 cmake --build build --config Release -j --clean-first
 ```
 
-The OpenBLAS library is installed because supported but disable because it may cause speed regression compare the llama's ggml-cpu native backend.
+> [!NOTE]
+> The OpenBLAS library is installed because supported but disabled because it may cause speed regression compare the Llama ggml-CPU native backend. A similar regression is likely to occur if your Ubuntu installation isn't using `libvulkan1` as per default installation or your GPU isn't powerful enough to compensate the PCI-express RAM⇆VRAM ping-pong overhead.
 
 ---
 
