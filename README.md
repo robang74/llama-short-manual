@@ -59,6 +59,9 @@ sudo apt install vulkan-sdk
 
 This SDK already contains its own `glslc` package which conflicts with the Ubuntu's one. In case of failure, you can chose for `-DGGML_VULKAN=OFF` in building or `sudo apt purge glslc` to cleanly install the Vulkan SDK's version.
 
+> [!NOTE]
+> During Ubuntu installation, the hardware is probed and the `libvulkan1` could be installed because it is functional to the graphical engine whether it is Xorg or Wayland. In such case, you will compile Llama against LunarG's Vulkan loader `libvulkan.so.1` but the code will dynamically link against the one from your system libraries. Unless you decide to proceed for a statically linked compilation (code duplication, cache underperformance, huge footprint) or re-install `libvulkan1` and related packages from the LunagG's repository which is possible only for supported Ubuntu versions. However, managing these deployment intricacies is beyond the scope of this document.
+
 ---
 
 ### Native llama quick build
