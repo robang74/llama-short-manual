@@ -4,7 +4,7 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
-#### Revision 75
+#### Revision 76
 
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
@@ -332,3 +332,28 @@ Mem:        16148684     6166552     5072540     1266792     4909592     6403060
 > /exit
 ```
 
+---
+
+### Conclusions
+
+Running a local AI for a general porpouse and/or sporadic use, the simplicity of LlamaFile approach wins but for everyone else it creates a certaing rigidity in models choice which is not suitable or not even acceptable because it can strongly limit the choice and/or impact the performance. 
+
+- When simplicity is a necessity, LlamaFile is the way.
+- When flexibility is a must to have, Llama is the way.
+
+#### Llamafile best choices
+
+| Llamafile Model | File (GB) | Intel Min. | AMD Min. | Linux/MacM4 | Windows |
+| --------------- |:---------:|:----------:|:--------:|:---------:|:-------:| 
+| Qwen3.5 4B Q5_K_S | [4.1](https://huggingface.co/mozilla-ai/llamafile_0.10/resolve/main/Qwen3.5-4B-Q5_K_S.llamafile) | i5U 8-11th gen. | R5 2xxx L3=16M | 16GB | 16GB |
+| Apertus 8B-i 2509 | [5.9](https://huggingface.co/mozilla-ai/llamafile_0.10/resolve/main/Apertus-8B-Instruct-2509.llamafile) | !U: Xeon or H/P | R5 4xxx L3=16M | 16GB | 24GB |
+| GPT-oss 20b Q5_K_S | [12](https://huggingface.co/mozilla-ai/llamafile_0.10/resolve/main/gpt-oss-20b-Q5_K_S.llamafile) | !U: Xeon W or i9 | R5 5xxx L3=16M | (sub-opt.) | 32GB |
+| LFM2 24B-A2B Q5_K_M | [16](https://huggingface.co/mozilla-ai/llamafile_0.10/resolve/main/LFM2-24B-A2B-Q5_K_M.llamafile) | !U: Xeon W or i9 | R5 5xxx L3=16M | 32GB | (sub-opt.) |
+
+#### General rules of thumbs
+
+- The available free RAM size determines the model.
+- The CPU efficiency determines the size of the model.
+- The heat dissipation system determines the usability.
+- Llama !file allows flexibility on GGUF, like E4B QAT.
+- The OS determines the effective available free RAM.
