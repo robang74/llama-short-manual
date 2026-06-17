@@ -4,7 +4,7 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
-#### Revision 78
+#### Revision 79
 
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
@@ -168,7 +168,7 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | | | `eq.` | `tk/s` | `tk/s` | `GB` | `GB` | `GB` | |
 | | | | | | | |
 | 0¹ | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{wNa8o8}}$$) | (4B) | 70.7 | 22.4 | $${\color{lightgreen}\textbf{》2.96《}}$$ | 2.53 | $${\color{lightgreen}\textbf{》2.04《}}$$ | 🟢 |
-| 0² | `Gemma-4 E2B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf?download=true) &nbsp;($${\color{lightgray}\textbf{full 4K @Q4{\\_}0}}$$) | (4B) | 58.6 | 16.6 | 4.68 | 4.40 | 3.12 | 🟢 |
+| 0² | `Gemma-4 E2B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf?download=true) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (4B) | $${\color{lightgreen}\textbf{》58.6《}}$$ | $${\color{lightgreen}\textbf{》16.6《}}$$ | 4.86 | 4.40 | 3.12 | ✅ |
 | | | | | | | |
 | 1 | `Qwen-2.5 Coder 3B-it Q6_K` [gguf](https://huggingface.co/unsloth/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-3B-Instruct-Q6_K.gguf) | 3B | 30.8 | 10.4 | 2.88 | 2.54 | 2.36 | 🟢 |
 | 2 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
