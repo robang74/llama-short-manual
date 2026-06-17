@@ -4,7 +4,7 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
-#### Revision 77
+#### Revision 78
 
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
@@ -114,7 +114,8 @@ export PATH=$PWD:$PATH
 
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
 opts="-ngl 0 --mlock --mmap --cpu-mask 0x0F --no-mmproj"
-opts="$opts -ctk q8_0 -ctv q8_0 --swa-full --offline -t 4"
+opts="$opts -ctk q8_0 -ctv q8_0 --swa-full --offline"
+opts="$opts --temperature 0.7 -t 4"
 
 ./llama-cli $opts -c 4096 -rea off -fa on -m $model
 ```
@@ -137,7 +138,7 @@ Starting with the same for running llama-cli enviroment:
 
 ```sh
 ./llama-server $opts -c 4096 -rea off -fa on -m $model \
-    --temperature 0.5 -np 1 --cache-ram 0
+    -np 1 --cache-ram 0
 ```
 
 The last two options save RAM because the webserver is limited in running a single AI instance instead of the common four (parallelism), which each of them requires a context window cache allocated.
@@ -169,15 +170,16 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | 0¹ | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{wNa8o8}}$$) | (4B) | 70.7 | 22.4 | $${\color{lightgreen}\textbf{》2.96《}}$$ | 2.53 | $${\color{lightgreen}\textbf{》2.04《}}$$ | 🟢 |
 | 0² | `Gemma-4 E2B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf?download=true) &nbsp;($${\color{lightgray}\textbf{full 4K @Q4{\\_}0}}$$) | (4B) | 58.6 | 16.6 | 4.68 | 4.40 | 3.12 | 🟢 |
 | | | | | | | |
-| 1 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
-| 2¹ | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
-| 2² | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
-| 3 | `Gemma-4 E4B-it-qat UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 6.53 | 3.93 | 🟢 |
-| 4 | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 6.78 | 4.97 | — |
-| 5 | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | $${\color{lightgreen}\textbf{》4.15《}}$$ | 3.65 | 3.08 | ✔️ |
-| 6 | `NextCoder 7B i1-Q4_K_M` [gguf](https://huggingface.co/mradermacher/NextCoder-7B-i1-GGUF/resolve/main/NextCoder-7B.i1-Q4_K_M.gguf) | 7B | 17.8 | $${\color{lightgray}\textbf{》6.0《}}$$ | 7.86 | 7.54 | 4.36 | ☑️ |
-| 7 | `DeepSeek-R1-distill-Qwen 7B-uncensored i1-Q4_0` | 7B |  15.9 | 6.6 | **8.01** | 7.60 | 4.14 | — |
-| 8 | `Apertus 8B-instruct-2509 UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 8B | 13.7 | $${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 7.27 | 4.78 | ☑️ |
+| 1 | `Qwen-2.5 Coder 3B-it Q6_K` [gguf](https://huggingface.co/unsloth/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-3B-Instruct-Q6_K.gguf) | 3B | 30.8 | 10.4 | 2.88 | 2.54 | 2.36 | 🟢 |
+| 2 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 3.64 | 2.64 | 🟢 |
+| 3¹ | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | 7.14 | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
+| 3² | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightgreen}\textbf{》7.99《}}$$ | 7.64 | 4.80 | ✅ |
+| 3³ | `Gemma-4 E4B-it-QAT UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 6.53 | 3.93 | 🟢 |
+| 3⁴ | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 6.78 | 4.97 | — |
+| 4 | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | $${\color{lightgreen}\textbf{》4.15《}}$$ | 3.65 | 3.08 | ✔️ |
+| 5 | `NextCoder 7B i1-Q4_K_M` [gguf](https://huggingface.co/mradermacher/NextCoder-7B-i1-GGUF/resolve/main/NextCoder-7B.i1-Q4_K_M.gguf) | 7B | 17.8 | $${\color{lightgray}\textbf{》6.0《}}$$ | 7.86 | 7.54 | 4.36 | ☑️ |
+| 6 | `DeepSeek-R1-dstl-Qwen 7B-uncensored i1-Q4_0` | 7B |  15.9 | 6.6 | **8.01** | 7.60 | 4.14 | — |
+| 7 | `Apertus 8B-instruct-2509 UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 8B | 13.7 | $${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 7.27 | 4.78 | ☑️ |
 | | | | | | | |
 | | *By Comparison*: | | | | | |
 | A | `Gemma-2 2B-it Q4_K_M` | 2B | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 | — |
@@ -185,8 +187,8 @@ Note that off-loading to the GPU is slower than CPU-only because the i5's GPU ca
 | C | `Qwen-3.5 4B-MTP Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) | 4B | 16.0 | 7.1 | 3.91 | 3.39 | 2.91 | ✔️ |
 | | | | | | | |
 | | *Above Limits*: | | | | | |
-| 9 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
-| 10 | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.2 | 11.9 | 6.50 | 🔶 |
+| 8 | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 11.6 | 6.86 | 🔶 |
+| 9 | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.2 | 11.9 | 6.50 | 🔶 |
 
 #### Table's Notes
 
