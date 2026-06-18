@@ -4,7 +4,7 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
-#### Revision 80
+#### Revision 81
 
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
@@ -218,7 +218,9 @@ Gemma 4's memory values collected are aligned with Google [specifications](https
 
 Therefore `-ctk q4_0 -ctv q4_0` allows a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. To grant having memory for longer context window: 128K peaks at 9.66 GB, 64K at 8.55 GB. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
 
-#### Thermalisation
+---
+
+### Thermalisation
 
 Considering [Ubuntu base](https://wiki.ubuntu.com/Base) rootfs 22.04.5 and 24.04.4 are 28MB and a [minimal Linux system](https://github.com/robang74/uchaosys/blob/v073/docs/from-pre-kernel-boot-time-to-console.png) w/ kernel 5.15 can happily run within 24MB of RAM, there is a good chance to run also the 12B Gemma 4 with a large context windows on a dedicated machine with only 16GB of RAM (2x4GB in quad-channel).
 
@@ -226,13 +228,13 @@ The real limit is set by the CPU's TDP and its thermal dissipation system, but d
 
 PassMark and similar [burst benchmarks](img/beanchmark-xeon4-vs-core5.png) are misleading for llama.cpp workloads. A laptop CPU (`i5-8365U, 15W TDP`) rated at 6000 points throttles to 800 MHz under sustained workload by 4 threads, while a workstation CPU (`E5-1620 v4, 140W TDP`) rated at 7000 points sustains 3.5 GHz on all 8 threads.
 
-The real throughput factor is not 20% but 9× (`140:15 = 875%`), proportional to TDP budget and thermal design which is directly related with the mass of the computer.
+The real throughput factor is not 20% but 9× (`140:15 = 875%`), proportional to TDP budget and thermal design which is directly related with the mass of the computer. Surprisingly, AI workload is currently more similar to a steam locomotive in its relationship with energy rather than information technology, until someone shifts this paradigm.
 
-Surprisingly, AI workload is currently more similar to a steam locomotive in its relationship with energy rather than information technology, until someone shifts this paradigm.
+#### Bare-metal minimum
 
-#### Conclusions
+A Thinkpad x280 or x390 are light, slim and compact laptops encased in an alloy chassis which is not heat-conductive like aluminium. Despite this limitation, a cheap cooling-pad can keep the max CPU temperature around 65°C and the SSD below 40°C. Without this aid, in compiling the Linux kernel with `make -j8`, it easily goes above 80°C and CPU's frequency drops from 1.8GHz to 800Mhz.
 
-Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently.
+Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently. However, a dual-channel 32GB configuration is definetely more apt.
 
 For running a basic Linux server 2GB of RAM is an "abundant luxury", therefore the Llama memory limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
 
