@@ -4,7 +4,7 @@
 
 - &nbsp;Click on the button to know how to &nbsp;[![Sponsor me](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4?style=flat&logo=github)](https://github.com/sponsors/robang74)&nbsp; this project and get in touch with me.
 
-#### Revision 81
+#### Revision 82
 
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
@@ -115,7 +115,7 @@ export PATH=$PWD:$PATH
 model="$HOME/Downloads/Qwen3.5-4B-Q4_K_M.gguf"
 opts="-ngl 0 --mlock --mmap --cpu-mask 0x0F --no-mmproj"
 opts="$opts -ctk q8_0 -ctv q8_0 --swa-full --offline"
-opts="$opts --temperature 0.7 -t 4"
+opts="$opts --temperature 0.7 --cpu-strict 1 -t 4"
 
 ./llama-cli $opts -c 4096 -rea off -fa on -m $model
 ```
@@ -247,7 +247,7 @@ Finally, looking at the llama pre-built [releases](#native-llama-quick-build), w
 A quick way to test the start time which includes the model loading is to pass as the first prompt the exit command. In this way it is possible to compare the starting time among various models and by a fair comparison with llamafile using the same model:
 
 ```sh
-drpc() { sync; echo 3 | sudo tee /proc/sys/vm/drop_caches; }
+drpc() { sudo sh -c "sync; swapoff -a; echo 3 >/proc/sys/vm/drop_caches"; }
 
 topt="$opts -c 4096 -rea off -fa on"
 
@@ -290,18 +290,18 @@ pmem() { grep ^Vm /proc/$(pgrep $1)/status; }
 pmem llama-cli | grep VmPeak
 ```
 
-But dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
+Dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
 
 ```sh
-$ drpc; free; ./llama-cli $topt -m $model;
+$ drpc; sleep 5 && { echo; free; } & free && ./llama-cli $opts -c $[32<<10] \
+  -rea off -fa on -m $model -p "What is the name of the capital of France?"
+```
+```
                total        used        free      shared  buff/cache   available
-Mem:        16148684     5863108     8595136     1146284     1690440     8827828
+Mem:        16148688     4743292      927712      721412    10477684    10344416
 Swap:              0           0           0
 ```
 ```
-Loading model...
-
-
 ▄▄ ▄▄
 ██ ██
 ██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
@@ -311,7 +311,7 @@ Loading model...
                                     ▀▀    ▀▀
 
 build      : b9571-e3471b3e7
-model      : Qwen3.5-4B-Q4_K_M.gguf
+model      : Gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf
 modalities : text
 
 available commands:
@@ -326,16 +326,15 @@ available commands:
 
 The capital of France is **Paris**.
 
-[ Prompt: 19.4 t/s | Generation: 7.5 t/s ]
+[ Prompt: 65.8 t/s | Generation: 23.2 t/s ]
 ```
-```sh
-(another console)$ free
+```
                total        used        free      shared  buff/cache   available
-Mem:        16148684     6166552     5072540     1266792     4909592     6403060
+Mem:        16148688     5425408      228380      738572    10494900     7643900
+Swap:              0           0           0
 ```
-```
-> /exit
-```
+
+Choosing properly the AI model, it size and quantisation and aligning with it the KV cache size, despite a relatively huge 32K of context, and using a cheap cooling-pad, a strict allocation of the AI's threads on CPU's core, half of RAM and CPU threads maximum, a 2019 laptop can burst out some numbers about reading and writing tokens speeds that are quite impressing.
 
 ---
 
