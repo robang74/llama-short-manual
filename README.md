@@ -6,7 +6,7 @@
 
 ![llama.cpp image](img/llama-cpp-page-header-4c.png)
 
-#### Revision 84
+#### Revision 85
 
 A short manual to run AI locally on your PC/laptop with decent performance despite minimal hardware requisites, focusing on optimizing memory management and presenting how to choose the best model to fit specific hardware limits. Backed by real-world benchmarks and configuration tests, this guide quickly evolves into a bottleneck root-cause investigation paper that exposes the critical roles of CPU thermal design and constraints over misleading burst benchmarks.
 
@@ -41,30 +41,30 @@ The Q4 and the context are those points on which we can save RAM when the AI loc
 sudo prlimit --pid=$$ --memlock=$((6<<30)):$((8<<30))
 ```
 
-For an opimised llama functioning the line above rises the current shell memory allocation limits respectively at 6GB (soft) and 8GB (hard). To make this change permanent for the user without the need to of doing `sudo` each time, the new limits should be set into `/etc/security/limits.conf`.
+For an optimised llama functioning the line above raises the current shell memory allocation limits respectively at 6GB (soft) and 8GB (hard). To make this change permanent for the user without the need to do `sudo` each time, the new limits should be set into `/etc/security/limits.conf`.
 
 ---
 
 ### Vulkan SDK (optional)
 
-Unless you have a serious video cards but an integrated one, the GPU will not effectively support you AI workload but slow down it.
+Unless you have a serious videocard but an integrated one, the GPU will not effectively support your AI workload but slow down it.
 
-However, if you do not try, you do not known. So, here below how to install the [Vulkan SDK](https://packages.lunarg.com/#) last version available for Ubuntu 22.04 (jammy) and 24.04 (noble):
+However, if you do not try, you do not know. So, here below how to install the [Vulkan SDK](https://packages.lunarg.com/#) last version available for Ubuntu 22.04 (jammy) and 24.04 (noble):
 
 ```
 distname=$(lsb_release -cs)
 wget -qO- https://packages.lunarg.com/lunarg-signing-key-pub.asc |
   sudo tee /etc/apt/trusted.gpg.d/lunarg.asc
-echo "deb https://packages.lunarg.com/vulkan $distname main" |
+echo "deb https://packages.lunarg.com/vulkandistname main" |
   sudo tee /etc/apt/sources.list.d/lunarg-vulkan.list
 sudo apt update
 sudo apt install vulkan-sdk
 ```
 
-This SDK already contains its own `glslc` package which conflicts with the Ubuntu's one. In case of failure, you can chose for `-DGGML_VULKAN=OFF` in building or `sudo apt purge glslc` to cleanly install the Vulkan SDK's version.
+This SDK already contains its own `glslc` package which conflicts with Ubuntu's one. In case of failure, you can choose for `-DGGML_VULKAN=OFF` in building or `sudo apt purge glslc` to cleanly install the Vulkan SDK's version.
 
 > [!NOTE]
-> During Ubuntu installation, the hardware is probed and the `libvulkan1` could be installed because it is functional to the graphical engine whether it is Xorg or Wayland. In such case, you will compile Llama against LunarG's Vulkan loader `libvulkan.so.1` but the code will dynamically link against the one from your system libraries. Unless you decide to proceed for a statically linked compilation (code duplication, cache underperformance, huge footprint) or re-install `libvulkan1` and related packages from the LunagG's repository which is possible only for supported Ubuntu versions. However, managing these deployment intricacies is beyond the scope of this document.
+> During Ubuntu installation, the hardware is probed and the `libvulkan1` could be installed because it is functional to the graphical engine whether it is Xorg or Wayland. In such a case, you will compile Llama against LunarG's Vulkan loader `libvulkan.so.1` but the code will dynamically link against the one from your system libraries. Unless you decide to proceed for a statically linked compilation (code duplication, cache underperformance, huge footprint) or re-install `libvulkan1` and related packages from the LunagG's repository which is possible only for supported Ubuntu versions. However, managing these deployment intricacies is beyond the scope of this document.
 
 ---
 
@@ -101,7 +101,7 @@ cmake --build build --config Release -j --clean-first
 ```
 
 > [!NOTE]
-> The OpenBLAS library is installed because supported but disabled because it may cause speed regression compare the Llama ggml-CPU native backend. A similar regression is likely to occur if your Ubuntu installation isn't using `libvulkan1` as per default installation or your GPU isn't powerful enough to compensate the PCI-express RAM⇆VRAM ping-pong overhead.
+> The OpenBLAS library is installed because it is supported but disabled because it may cause speed regression compared to the Llama ggml-CPU native backend. A similar regression is likely to occur if your Ubuntu installation isn't using `libvulkan1` as per default installation or your GPU isn't powerful enough to compensate the PCI-express RAM⇆VRAM ping-pong overhead.
 
 ---
 
@@ -119,10 +119,10 @@ opts="-ngl 0 --mlock --mmap --cpu-mask 0x0F --no-mmproj"
 opts="$opts -ctk q8_0 -ctv q8_0 --swa-full --offline"
 opts="$opts --temperature 0.7 --cpu-strict 1 -t 4"
 
-./llama-cli $opts -c 4096 -rea off -fa on -m $model
+./llama-cliopts -c 4096 -rea off -fa on -mmodel
 ```
 
-The model is configured to reply without thinking and use in full the flash attention `-fa on` which reduces the consumption of the RAM compared the same amount of tokens for the context `-c 4096`.
+The model is configured to reply without thinking and use in full the flash attention `-fa on` which reduces the consumption of the RAM compared to the same amount of tokens for the context `-c 4096`.
 
 The context quantisation at 8-bit `-ctk q8_0 -ctv q8_0` keeps a good precision but halves the consumption of the RAM compared with the 16-bit natural representation.
 
@@ -136,10 +136,10 @@ However this system prompt strongly influences the tests in a way that are much 
 
 ### Running the llama server
 
-Starting with the same for running llama-cli enviroment:
+Starting with the same for running llama-cli environment:
 
 ```sh
-./llama-server $opts -c 4096 -rea off -fa on -m $model \
+./llama-serveropts -c 4096 -rea off -fa on -mmodel \
     -np 1 --cache-ram 0
 ```
 
@@ -165,54 +165,54 @@ Testing prompt:
 
 Note that off-loading to the GPU is slower than CPU-only because the i5's GPU cannot handle all the layers:
 
-| # | Model Name  | Size | Read | Write | Mem | File | Fit |
-|:-:| ----------- |:----:|:----:|:-----:|:---:|:----:|:---:|
-| | | `eq.` | `tk/s` | `tk/s` | `GB` | `GB` | |
-| | | | | | |
-| 0¹ | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{wNa8o8}}$$) | (4B) | 70.7 | 22.4 | $${\color{lightgreen}\textbf{》2.96《}}$$ | $${\color{lightgreen}\textbf{》2.04《}}$$ | 🟢 |
-| 0² | `Gemma-4 E2B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf?download=true) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (4B) | $${\color{lightgreen}\textbf{》58.6《}}$$ | $${\color{lightgreen}\textbf{》16.6《}}$$ | 4.86 | 3.12 | ✅ |
-| 1 | `Qwen-2.5 Coder 3B-it Q6_K` [gguf](https://huggingface.co/unsloth/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-3B-Instruct-Q6_K.gguf) | 3B | 30.8 | 10.4 | 2.88 | 2.36 | 🟢 |
-| 2 | `Hermes-3 Llama-3.2 3B Q6_K_L` [gguf](https://huggingface.co/bartowski/Hermes-3-Llama-3.2-3B-GGUF/resolve/main/Hermes-3-Llama-3.2-3B-Q6_K_L.gguf) | 3B |  29.8 | 8.7 | 3.23 | 2.55 | 🟢 |
-| | | | | | |
-| 3 | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B | $${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 2.64 | 🟢 |
-| 4¹ | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) | $${\color{lightgreen}\textbf{》26.4《}}$$ | $${\color{lightgreen}\textbf{》9.2《}}$$ | $${\color{lightblue}\textbf{》7.99《}}$$ | 4.80 | ✅ |
-| 4² | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 | $${\color{lightgray}\textbf{》7.53《}}$$ | $${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
-| 4³ | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 4.97 | — |
-| 4⁴ | `Gemma-4 E4B-it-QAT UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 | $${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 3.93 | 🟢 |
-| 5 | `Phi-4-mini 3.8B-instruct Q5_K_M` [gguf](https://huggingface.co/unsloth/Phi-4-mini-instruct-GGUF/resolve/main/Phi-4-mini-instruct-Q5_K_M.gguf) | 4B | 21.3 | 9.3 | $${\color{lightgreen}\textbf{》3.33《}}$$ | 2.65 | 🟢 |
-| 6 | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B | $${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | 4.15 | 3.08 | ✔️ |
-| 7 | `NextCoder 7B i1-Q4_K_M` [gguf](https://huggingface.co/mradermacher/NextCoder-7B-i1-GGUF/resolve/main/NextCoder-7B.i1-Q4_K_M.gguf) | 7B | 17.8 | $${\color{lightgray}\textbf{》6.0《}}$$ | $${\color{lightgray}\textbf{》7.86《}}$$ | 4.36 | ☑️ |
-| 8 | `DeepSeek-R1-dstl-Qwen 7B-uncensored i1-Q4_0` | 7B |  15.9 | 6.6 | **8.01** | 4.14 | — |
-| 9 | `Apertus 8B-instruct-2509 UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 8B | 13.7 | $${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 4.78 | ☑️ |
-| | | | | | |
-| | *By Comparison*: | | | | | |
-| A | `Gemma-2 2B-it Q4_K_M` | 2B | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 | — |
-| B | `Qwen-3.5 4B Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) ➡ [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) &nbsp;($${\color{lightgray}\textbf{3.75 GB}}$$) | 4B | 18.5 | 5.0 | **8.80** | 3.02 | ✔️ |
-| C | `Qwen-3.5 4B-MTP Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) | 4B | 16.0 | 7.1 | 3.91 | 2.91 | ✔️ |
-| | | | | | |
-| | *Above Limits*: | | | | | |
-| D | `Hypnos i1-8B i1-IQ4_NL` [gguf](https://huggingface.co/mradermacher/Hypnos-i1-8B-i1-GGUF/resolve/main/Hypnos-i1-8B.i1-IQ4_NL.gguf) &nbsp;($${\color{orange}\textbf{mem. 9 GB}}$$)  | 8B |  16.9 | $${\color{lightgreen}\textbf{》6.6《}}$$ | $${\color{orange}\textbf{》8.64《}}$$ | 4.36 | ☑️ |
-| E | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 | $${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 6.86 | 🔶 |
-| F | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 | $${\color{orange}\textbf{》4.0《}}$$ | 13.2 | 6.50 | 🔶 |
+| # | Type | Model Name  | Size | Read | Write | Mem | File | Fit |
+|:-:|:-:| ----------- |:----:|:----:|:-----:|:---:|:----:|:---:|
+| | | | `eq.` | `tk/s` | `tk/s` | `GB` | `GB` | |
+| | | | | | | |
+| 0¹ | CRT | `Gemma-4 E2B-it-qat-UD Q2_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E2B-it-qat-mobile-GGUF/resolve/main/gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf) &nbsp;($${\color{lightgray}\textbf{wNa8o8}}$$) | (4B) | 70.7 | 22.4 |${\color{lightgreen}\textbf{》2.96《}}$$ |${\color{lightgreen}\textbf{》2.04《}}$$ | 🟢 |
+| 0² | CRT | `Gemma-4 E2B-it-qat Q4_0` [gguf](https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-gguf/resolve/main/gemma-4-E2B_q4_0-it.gguf?download=true) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (4B) |${\color{lightgreen}\textbf{》58.6《}}$$ |${\color{lightgreen}\textbf{》16.6《}}$$ | 4.86 | 3.12 | ✅ |
+| 1 | CDR | `Qwen-2.5 Coder 3B-it Q6_K` [gguf](https://huggingface.co/unsloth/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/Qwen2.5-Coder-3B-Instruct-Q6_K.gguf) | 3B | 30.8 | 10.4 | 2.88 | 2.36 | 🟢 |
+| 2 | RPL | `Hermes-3 Llama-3.2 3B Q6_K_L` [gguf](https://huggingface.co/bartowski/Hermes-3-Llama-3.2-3B-GGUF/resolve/main/Hermes-3-Llama-3.2-3B-Q6_K_L.gguf) | 3B |  29.8 | 8.7 | 3.23 | 2.55 | 🟢 |
+| | | | | | | |
+| 3 | GNR | `Qwen-3.5 4B Q4_K_M` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf) | 4B |${\color{lightgreen}\textbf{》26.8《}}$$ | 8.1 | 5.03 | 2.64 | 🟢 |
+| 4¹ | CRT | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) &nbsp;($${\color{lightgreen}\textbf{full 32K @Q4{\\_}0}}$$) | (8B) |${\color{lightgreen}\textbf{》26.4《}}$$ |${\color{lightgreen}\textbf{》9.2《}}$$ |${\color{lightblue}\textbf{》7.99《}}$$ | 4.80 | ✅ |
+| 4² | CRT | `Gemma-4 E4B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf) | (8B) | 22.5 | 9.0 |${\color{lightgray}\textbf{》7.53《}}$$ |${\color{lightgray}\textbf{》4.80《}}$$ | ✔️ |
+| 4³ | CRT | `Gemma-4 E4B-it-obliterated Q4_K_M` | (8B) | 23.2 | 7.5 | 7.40 | 4.97 | — |
+| 4⁴ | CRT | `Gemma-4 E4B-it-QAT UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-qat-GGUF/resolve/main/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf) | (8B) | 20.5 |${\color{lightgreen}\textbf{》9.2《}}$$ | 6.99 | 3.93 | 🟢 |
+| 5 | SCI | `Phi-4-mini 3.8B-instruct Q5_K_M` [gguf](https://huggingface.co/unsloth/Phi-4-mini-instruct-GGUF/resolve/main/Phi-4-mini-instruct-Q5_K_M.gguf) | 4B | 21.3 | 9.3 |${\color{lightgreen}\textbf{》3.33《}}$$ | 2.65 | 🟢 |
+| 6 | GNR | `Qwen-3.5 4B UD-Q5_K_XL` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-UD-Q5_K_XL.gguf) | 4B |${\color{lightgray}\textbf{》18.3《}}$$ | 7.3 | 4.15 | 3.08 | ✔️ |
+| 7 | CDR | `NextCoder 7B i1-Q4_K_M` [gguf](https://huggingface.co/mradermacher/NextCoder-7B-i1-GGUF/resolve/main/NextCoder-7B.i1-Q4_K_M.gguf) | 7B | 17.8 |${\color{lightgray}\textbf{》6.0《}}$$ |${\color{lightgray}\textbf{》7.86《}}$$ | 4.36 | ☑️ |
+| 8 | RSN | `DeepSeek-R1-dstl-Qwen 7B-uncensored i1-Q4_0` | 7B |  15.9 | 6.6 | **8.01** | 4.14 | — |
+| 9 | GNR | `Apertus 8B-instruct-2509 UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/Apertus-8B-Instruct-2509-GGUF/resolve/main/Apertus-8B-Instruct-2509-UD-Q4_K_XL.gguf) | 8B | 13.7 |${\color{lightblue}\textbf{》5.3《}}$$ | 7.61 | 4.78 | ☑️ |
+| | | | | | | |
+| | | *By Comparison*: | | | | | |
+| A | CRT | `Gemma-2 2B-it Q4_K_M` | 2B | 47.4 | 13.8 | 3.13 | 2.15 | 1.59 | — |
+| B | GNR | `Qwen-3.5 4B Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) ➡ [llamafile](https://docs.mozilla.ai/llamafile/getting-started/pre-built-llamafiles) &nbsp;($${\color{lightgray}\textbf{3.75 GB}}$$) | 4B | 18.5 | 5.0 | **8.80** | 3.02 | ✔️ |
+| C | GNR | `Qwen-3.5 4B-MTP Q5_K_S` [gguf](https://huggingface.co/unsloth/Qwen3.5-4B-MTP-GGUF/resolve/main/Qwen3.5-4B-Q5_K_S.gguf) | 4B | 16.0 | 7.1 | 3.91 | 2.91 | ✔️ |
+| | | | | | | |
+| | | *Above Limits*: | | | | | |
+| D | SCI | `Hypnos i1-8B i1-IQ4_NL` [gguf](https://huggingface.co/mradermacher/Hypnos-i1-8B-i1-GGUF/resolve/main/Hypnos-i1-8B.i1-IQ4_NL.gguf) &nbsp;($${\color{orange}\textbf{mem. 9 GB}}$$)  | 8B |  16.9 |${\color{lightgreen}\textbf{》6.6《}}$$ |${\color{orange}\textbf{》8.64《}}$$ | 4.36 | ☑️ |
+| E | CRT | `Gemma-4 12B-it UD-Q4_K_XL` [gguf](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf) &nbsp;($${\color{orange}\textbf{mem. 12 GB}}$$) | 12B | 8.9 |${\color{orange}\textbf{》3.6《}}$$ | 12.2 | 6.86 | 🔶 |
+| F | CRT | `Gemma-4 12B-it-QAT Q4_0` [gguf](https://huggingface.co/google/gemma-4-12B-it-qat-q4_0-gguf/resolve/main/gemma-4-12b-it-qat-q4_0.gguf) &nbsp;($${\color{orange}\textbf{mem. 14 GB}}$$) | 12B | 9.1 |${\color{orange}\textbf{》4.0《}}$$ | 13.2 | 6.50 | 🔶 |
 
 #### Table's Notes
 
 - The human reading speed in English varies between 5 and 11 tk/s, on average 7.5 tk/s.
-- Some models are more verbose and their Wt/k drop, hence verbosity is a fair penality.
+- Some models are more verbose and their Wt/k drop, hence verbosity is a fair penalty.
 - Energy saving mode (max 15W TDP) otherwise i5-8365 gets hot and drops the frequency.
-- Tests were completed before adding `--mmap`, which by defaut is enabled, and `--swa-full`.
+- Tests were completed before adding `--mmap`, which by default is enabled, and `--swa-full`.
 
 #### Data Evaluation
 
 The prompt reading is usually faster (Rtk/s) than generation (Wtk/s) while the RAM consumption, analyzed via free, reveals the full impact of the model file and the context overhead (around 500-600MB extra). This wasn't obvious but `free` output remains consistent across various runs.
 
-Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remains relatively colder and not fully busy.
+Threads parallelisation `-t 4` should be related to the number of cores, ignoring the CPU threads. The CPU will throttle a bit above 50%, the performance will be the same, and the CPU will remain relatively colder and not fully busy.
 
 Using `-t 8` there is a regression in performances, while using `--cpu-mask 0x0F` the test results are much more stable and aligned with the maximum values recorded in the table.
 
-Fundametally, it is a matter of CPU temperature that raises from 45°C to 65°C in the first 10s of computing, then CPU starts to trottle down: more threads more heat. A mask like `0x0F` spreads the heat uniformly on the four physical cores, thus a more repeatible outcome.
+Fundamentally, it is a matter of CPU temperature that rises from 45°C to 65°C in the first 10s of computing, then CPU starts to throttle down: more threads, more heat. A mask like `0x0F` spreads the heat uniformly on the four physical cores, thus a more repeatable outcome.
 
-While the `Q4_0` might seems obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
+While the `Q4_0` might seem obsolete, it is way faster when the model is relatively big (7B) and the CPU is relatively old (i5-8th). In some models, distillation (or pruning) and uncensoring (or ablation) can spare a lot of RAM and improve speed.
 
 #### By Comparison
 
@@ -220,7 +220,7 @@ I did as equivalent as possible tests on `Qwen3.5-4B-Q5_K_S.llamafile` and the m
 
 Gemma 4's memory values collected are aligned with Google [specifications](https://ai.google.dev/gemma/docs/core#gemma-4-inference-memory-requirements). Hence, the `E4B` is equivalent to a **`8B`** w/o the computational burden of a larger model. The most relevant aspect is about Gemma 4 [Quantization Aware Training](https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf) which suggests using `Q4_0` for the KV caches is **natively fine**.
 
-Therefore `-ctk q4_0 -ctv q4_0` allows a relatively huge 32K context window `-c $((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. To grant having memory for longer context window: 128K peaks at 9.66 GB, 64K at 8.55 GB. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
+Therefore `-ctk q4_0 -ctv q4_0` allows a relatively huge 32K context window `-c((32<<10)) --swa-full` while keeping the RAM usage within the 8GB limit. To grant having memory for a longer context window: 128K peaks at 9.66 GB, 64K at 8.55 GB. Instead, with the `Gemma-4 12B-it-QAT Q4_0` and `-ctk q4_0 -ctv q4_0` the most daring config is `-c 4096 --swa-full` within the 14GB limit.
 
 ---
 
@@ -238,7 +238,7 @@ The real throughput factor is not 20% but 9× (`140:15 = 875%`), proportional to
 
 A Thinkpad x280 or x390 are light, slim and compact laptops encased in an alloy chassis which is not heat-conductive like aluminium. Despite this limitation, a cheap cooling-pad can keep the max CPU temperature around 65°C and the SSD below 40°C. Without this aid, in compiling the Linux kernel with `make -j8`, it easily goes above 80°C and CPU's frequency drops from 1.8GHz to 800Mhz.
 
-Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently. However, a dual-channel 32GB configuration is definetely more apt.
+Considering a machine equipped with a Ryzen Pro 5 series 5000 and 16GB DDR4 3200Mhz in dual-channel, we can easily reach the conclusion that in the range `[ €180, €260 ]` such machine can work as a dedicated uAI-server providing a 12B model access by network, cabled or wifi indifferently. However, a dual-channel 32GB configuration is definitely more apt.
 
 For running a basic Linux server 2GB of RAM is an "abundant luxury", therefore the Llama memory limits can be raised to 12GB (soft) and 14GB (hard). Considering the overall ratio in computational capacity, twice a Thinkpad X390, the expected throughput is 7.2 tk/s, in CPU-only mode and without specific low-level or ML optimisations.
 
@@ -255,11 +255,11 @@ drpc() { sudo sh -c "sync; swapoff -a; echo 3 >/proc/sys/vm/drop_caches"; }
 
 topt="$opts -c 4096 -rea off -fa on"
 
-drpc; time -p ./llama-cli $topt -p "/exit" \
+drpc; time -p ./llama-clitopt -p "/exit" \
   -m Qwen3.5-4B-Q4_K_M.gguf
 
 drpc; echo "/exit" | time -p sh \
-  ./Qwen3.5-4B-Q5_K_S.llamafile --chat $topt
+  ./Qwen3.5-4B-Q5_K_S.llamafile --chattopt
 ```
 
 As anticipated the llamafile is faster at start-up time:
@@ -281,7 +281,7 @@ As anticipated the llamafile is faster at start-up time:
 
 - The `user` timings aren't comparable with the .llama one due to the `sh` usage.
 - Two seconds (`5.78 - 3.88`) can be perceived but `4B-MTP` load is just 5% slower.
-- The SSD `hdparm` troughtput is 17GB/s cached reads, model matters more than its size.
+- The SSD `hdparm` throughput is 17GB/s cached reads, the model matters more than its size.
 
 ---
 
@@ -290,15 +290,15 @@ As anticipated the llamafile is faster at start-up time:
 The correct full approach includes checking also the resident size in memory of the `llama` instance running the model:
 
 ```sh
-pmem() { grep -e "^Vm" /proc/$(pgrep $1)/status; }
+pmem() { grep -e "^Vm" /proc/$(pgrep1)/status; }
 mpeak() { echo; free; pmem llama-cli | grep VmPeak; }
 ```
 
 Dropping the cache before the run, and checking the `free` difference is the most straightforward way to check the `pmem` output:
 
 ```sh
-$ drpc; sleep 15 && mpeak & free && ./llama-cli $opts -c $[32<<10] \
-  -rea off -fa on -m $model -p "What is the name of the capital of France?"
+$ drpc; sleep 15 && mpeak & free && ./llama-cliopts -c[32<<10] \
+  -rea off -fa on -mmodel -p "What is the name of the capital of France?"
 ```
 ```
                total        used        free      shared  buff/cache   available
@@ -344,7 +344,7 @@ Choosing properly the AI model, it size and quantisation and aligning with it th
 
 ### Conclusions
 
-Running a local AI for a general porpouse and/or sporadic use, the simplicity of LlamaFile approach wins but for everyone else it creates a certaing rigidity in models choice which is not suitable or not even acceptable because it can strongly limit the choice and/or impact the performance. 
+Running a local AI for a general purpose and/or sporadic use, the simplicity of LlamaFile approach wins but for everyone else it creates a certain rigidity in model choice which is not suitable or not even acceptable because it can strongly limit the choice and/or impact the performance.
 
 #### Llamafile best choices
 
@@ -367,3 +367,4 @@ Running a local AI for a general porpouse and/or sporadic use, the simplicity of
 - The heat dissipation system determines the usability.
 - Llama !file allows flexibility on GGUF, like E4B QAT.
 - The OS determines the effective available free RAM.
+
